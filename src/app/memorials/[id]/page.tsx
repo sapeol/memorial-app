@@ -52,21 +52,22 @@ export default async function MemorialPage({
   // Get participants for the memorial
   const { data: participants } = await supabase
     .from('memorial_participants')
-    .select(`
-      *,
-      profiles:user_id (
-        email
-      )
-    `)
+    .select('*')
     .eq('memorial_id', id)
     .order('created_at', { ascending: true })
 
   // Get milestones for timeline
-  const { data: milestones } = await supabase
+  let milestoneQuery = supabase
     .from('milestones')
     .select('*')
     .eq('memorial_id', id)
     .order('event_date', { ascending: true })
+
+  if (!isOwner) {
+    milestoneQuery = milestoneQuery.or(`status.eq.approved,submitted_by.eq.${session.user.id}`)
+  }
+
+  const { data: milestones } = await milestoneQuery
 
   // Get media items
   const { data: mediaItems } = await supabase

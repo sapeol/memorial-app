@@ -15,9 +15,6 @@ interface Participant {
   access_level: 'owner' | 'contributor' | 'visitor'
   invited_at: string | null
   accepted_at: string | null
-  profiles?: {
-    email: string | null
-  }
 }
 
 interface ParticipantsListProps {
@@ -162,7 +159,7 @@ export function ParticipantsList({
                       </div>
                       <div>
                         <p className="text-foreground font-medium">
-                          {participant.guest_name || participant.profiles?.email || 'Anonymous'}
+                          {participant.guest_name || participant.guest_email || 'Anonymous'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {participant.accepted_at

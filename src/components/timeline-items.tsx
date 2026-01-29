@@ -19,6 +19,7 @@ interface Milestone {
   event_date: string | null
   location: string | null
   submitted_by: string
+  status: 'pending' | 'approved' | 'rejected' | null
 }
 
 interface TimelineItemsProps {
@@ -34,6 +35,12 @@ export function TimelineItems({ milestones, memorialId, currentUserId, isOwner }
 
   const handleDelete = (deletedId: string) => {
     setItems((prev) => prev.filter((m) => m.id !== deletedId))
+  }
+
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setItems((prev) => prev.map((m) => 
+      m.id === id ? { ...m, status: newStatus as any } : m
+    ))
   }
 
   if (items.length === 0) {
@@ -54,19 +61,35 @@ export function TimelineItems({ milestones, memorialId, currentUserId, isOwner }
     <div className="space-y-6">
       {items.map((milestone, index) => {
         const canEdit = isOwner || milestone.submitted_by === currentUserId
+        const status = milestone.status || 'pending' // Default to pending if null
 
         return (
-          <div key={milestone.id} className="flex gap-4 group">
+          <div key={milestone.id} className={`flex gap-4 group ${status === 'rejected' ? 'opacity-50' : ''}`}>
             <div className="flex flex-col items-center">
-              <div className="w-4 h-4 rounded-full bg-brand" />
+              <div className={`w-4 h-4 rounded-full ${
+                status === 'approved' ? 'bg-brand' : 
+                status === 'rejected' ? 'bg-destructive' : 'bg-yellow-500'
+              }`} />
               {index < items.length - 1 && <div className="w-0.5 flex-1 bg-border min-h-16" />}
             </div>
             <div className="flex-1 pb-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {milestone.event_date ? new Date(milestone.event_date).toLocaleDateString() : ''}
-                  </p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm text-muted-foreground">
+                      {milestone.event_date ? new Date(milestone.event_date).toLocaleDateString() : ''}
+                    </p>
+                    {status === 'pending' && (
+                      <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+                        Pending Approval
+                      </span>
+                    )}
+                    {status === 'rejected' && (
+                      <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+                        Rejected
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-lg font-semibold text-foreground">{milestone.title}</h3>
                   {milestone.description && (
                     <p className="text-muted-foreground mt-1">{milestone.description}</p>
@@ -86,7 +109,9 @@ export function TimelineItems({ milestones, memorialId, currentUserId, isOwner }
                     currentUserId={currentUserId}
                     submittedById={milestone.submitted_by}
                     canEdit={isOwner}
+                    status={milestone.status}
                     onDelete={() => handleDelete(milestone.id)}
+                    onStatusChange={(newStatus) => handleStatusChange(milestone.id, newStatus)}
                   />
                 )}
               </div>

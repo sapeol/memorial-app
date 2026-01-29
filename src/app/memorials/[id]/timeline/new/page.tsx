@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DatePicker } from '@/components/ui/date-picker'
 import { createClient } from '@/lib/supabase/client'
 
 export default function NewMilestonePage({
@@ -20,7 +21,7 @@ export default function NewMilestonePage({
   const [memorialId, setMemorialId] = useState<string | null>(null)
 
   const [title, setTitle] = useState('')
-  const [date, setDate] = useState('')
+  const [date, setDate] = useState<Date | undefined>()
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
 
@@ -44,15 +45,26 @@ export default function NewMilestonePage({
         return
       }
 
+      // Check if user is owner
+      const { data: memorial } = await supabase
+        .from('memorials')
+        .select('owner_id')
+        .eq('id', memorialId)
+        .single()
+
+      const isOwner = memorial?.owner_id === user.id
+      const status = isOwner ? 'approved' : 'pending'
+
       const { error: insertError } = await supabase
         .from('milestones')
         .insert({
           memorial_id: memorialId,
           title,
-          event_date: date || null,
+          event_date: date?.toISOString() || null,
           description,
           location,
           submitted_by: user.id,
+          status,
         })
 
       if (insertError) throw insertError
@@ -101,13 +113,11 @@ export default function NewMilestonePage({
 
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  type="date"
+                <Label>Date</Label>
+                <DatePicker
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="bg-background border-border text-foreground"
+                  onChange={setDate}
+                  placeholder="Select date"
                 />
               </div>
               <div className="space-y-2">

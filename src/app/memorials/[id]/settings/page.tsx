@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DatePicker } from '@/components/ui/date-picker'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ImageUpload } from '@/components/image-upload'
 import { createClient } from '@/lib/supabase/client'
@@ -37,8 +38,8 @@ export default function MemorialSettingsPage({
 
   // Memorial state
   const [name, setName] = useState('')
-  const [birthDate, setBirthDate] = useState('')
-  const [passingDate, setPassingDate] = useState('')
+  const [birthDate, setBirthDate] = useState<Date | undefined>()
+  const [passingDate, setPassingDate] = useState<Date | undefined>()
   const [bio, setBio] = useState('')
   const [coverImage, setCoverImage] = useState('')
   const [themeColor, setThemeColor] = useState('#0f172a')
@@ -76,8 +77,8 @@ export default function MemorialSettingsPage({
       }
 
       setName(memorial.name || '')
-      setBirthDate(memorial.birth_date || '')
-      setPassingDate(memorial.passing_date || '')
+      setBirthDate(memorial.birth_date ? new Date(memorial.birth_date) : undefined)
+      setPassingDate(memorial.passing_date ? new Date(memorial.passing_date) : undefined)
       setBio(memorial.bio || '')
       setCoverImage(memorial.cover_image || '')
       setThemeColor(memorial.theme_color || '#0f172a')
@@ -100,8 +101,8 @@ export default function MemorialSettingsPage({
         .from('memorials')
         .update({
           name,
-          birth_date: birthDate || null,
-          passing_date: passingDate || null,
+          birth_date: birthDate?.toISOString() || null,
+          passing_date: passingDate?.toISOString() || null,
           bio,
           cover_image: coverImage || null,
           theme_color: themeColor,
@@ -214,23 +215,19 @@ export default function MemorialSettingsPage({
 
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="birthDate">Birth Date</Label>
-                <Input
-                  id="birthDate"
-                  type="date"
+                <Label>Birth Date</Label>
+                <DatePicker
                   value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  className="bg-background border-border text-foreground"
+                  onChange={setBirthDate}
+                  placeholder="Select birth date"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="passingDate">Passing Date</Label>
-                <Input
-                  id="passingDate"
-                  type="date"
+                <Label>Passing Date</Label>
+                <DatePicker
                   value={passingDate}
-                  onChange={(e) => setPassingDate(e.target.value)}
-                  className="bg-background border-border text-foreground"
+                  onChange={setPassingDate}
+                  placeholder="Select passing date"
                 />
               </div>
             </div>

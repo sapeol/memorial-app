@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DatePicker } from '@/components/ui/date-picker'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2 } from 'lucide-react'
 
@@ -23,7 +24,7 @@ export default function EditMilestonePage({
   const [milestoneId, setMilestoneId] = useState<string | null>(null)
 
   const [title, setTitle] = useState('')
-  const [eventDate, setEventDate] = useState('')
+  const [eventDate, setEventDate] = useState<Date | undefined>()
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
 
@@ -50,7 +51,7 @@ export default function EditMilestonePage({
     }
 
     setTitle(data.title || '')
-    setEventDate(data.event_date || '')
+    setEventDate(data.event_date ? new Date(data.event_date) : undefined)
     setDescription(data.description || '')
     setLocation(data.location || '')
     setLoading(false)
@@ -69,7 +70,7 @@ export default function EditMilestonePage({
         .from('milestones')
         .update({
           title,
-          event_date: eventDate || null,
+          event_date: eventDate?.toISOString() || null,
           description: description || null,
           location: location || null,
         })
@@ -128,13 +129,11 @@ export default function EditMilestonePage({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="eventDate">Date</Label>
-              <Input
-                id="eventDate"
-                type="date"
+              <Label>Date</Label>
+              <DatePicker
                 value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-                className="bg-background border-border text-foreground"
+                onChange={setEventDate}
+                placeholder="Select date"
               />
             </div>
 
