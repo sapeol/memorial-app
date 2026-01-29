@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -31,23 +32,24 @@ export default async function DashboardPage() {
   const contributedMemorials = memorials?.filter((m) => m.owner_id !== session.user.id) ?? []
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
       {/* Header */}
-      <header className="border-b border-white/10">
+      <header className="border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center">
-              <span className="text-slate-900 text-sm">✦</span>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center">
+              <span className="text-white text-sm">✦</span>
             </div>
-            <span className="text-white font-medium">Memorial</span>
+            <span className="text-foreground font-medium">Memorial</span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-zinc-400 text-sm">{session.user.email}</span>
+            <span className="text-muted-foreground text-sm">{session.user.email}</span>
             <form action="/auth/sign-out" method="post">
-              <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white" type="submit">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" type="submit">
                 Sign Out
               </Button>
             </form>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -55,11 +57,11 @@ export default async function DashboardPage() {
       <main className="max-w-6xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-semibold text-white mb-2">Your Memorials</h1>
-            <p className="text-zinc-400">Manage and view the memorials you've created and contribute to</p>
+            <h1 className="text-3xl font-semibold text-foreground mb-2">Your Memorials</h1>
+            <p className="text-muted-foreground">Manage and view the memorials you've created and contribute to</p>
           </div>
           <Link href="/memorials/new">
-            <Button className="bg-amber-500 hover:bg-amber-400 text-slate-900">
+            <Button className="bg-brand text-brand-foreground hover:bg-brand-hover">
               + Create Memorial
             </Button>
           </Link>
@@ -68,20 +70,20 @@ export default async function DashboardPage() {
         {/* Memorials I created */}
         {myMemorials.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-lg font-medium text-white mb-4">Created by you</h2>
+            <h2 className="text-lg font-medium text-foreground mb-4">Created by you</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {myMemorials.map((memorial) => (
                 <Link key={memorial.id} href={`/memorials/${memorial.id}`}>
-                  <Card className="p-6 bg-white/5 border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                  <Card className="p-6 bg-card/50 backdrop-blur border-border hover:bg-muted/50 transition-colors cursor-pointer">
                     {memorial.cover_image && (
                       <div
                         className="w-full h-32 rounded-md bg-cover bg-center mb-4"
                         style={{ backgroundImage: `url(${memorial.cover_image})` }}
                       />
                     )}
-                    <h3 className="text-lg font-semibold text-white mb-1">{memorial.name}</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">{memorial.name}</h3>
                     {memorial.birth_date && (
-                      <p className="text-zinc-500 text-sm">
+                      <p className="text-muted-foreground text-sm">
                         {memorial.birth_date ? new Date(memorial.birth_date).toLocaleDateString() : ''} - {memorial.passing_date ? new Date(memorial.passing_date).toLocaleDateString() : ''}
                       </p>
                     )}
@@ -95,20 +97,20 @@ export default async function DashboardPage() {
         {/* Memorials I contribute to */}
         {contributedMemorials.length > 0 && (
           <section>
-            <h2 className="text-lg font-medium text-white mb-4">Contributing to</h2>
+            <h2 className="text-lg font-medium text-foreground mb-4">Contributing to</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {contributedMemorials.map((memorial) => (
                 <Link key={memorial.id} href={`/memorials/${memorial.id}`}>
-                  <Card className="p-6 bg-white/5 border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                  <Card className="p-6 bg-card/50 backdrop-blur border-border hover:bg-muted/50 transition-colors cursor-pointer">
                     {memorial.cover_image && (
                       <div
                         className="w-full h-32 rounded-md bg-cover bg-center mb-4"
                         style={{ backgroundImage: `url(${memorial.cover_image})` }}
                       />
                     )}
-                    <h3 className="text-lg font-semibold text-white mb-1">{memorial.name}</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">{memorial.name}</h3>
                     {memorial.birth_date && (
-                      <p className="text-zinc-500 text-sm">
+                      <p className="text-muted-foreground text-sm">
                         {memorial.birth_date ? new Date(memorial.birth_date).toLocaleDateString() : ''} - {memorial.passing_date ? new Date(memorial.passing_date).toLocaleDateString() : ''}
                       </p>
                     )}
@@ -121,14 +123,14 @@ export default async function DashboardPage() {
 
         {/* Empty state */}
         {memorials?.length === 0 && (
-          <Card className="p-12 bg-white/5 border-white/10 text-center">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+          <Card className="p-12 bg-card/50 backdrop-blur border-border text-center">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">✦</span>
             </div>
-            <h2 className="text-xl font-semibold text-white mb-2">No memorials yet</h2>
-            <p className="text-zinc-400 mb-6">Create your first memorial to honor a loved one</p>
+            <h2 className="text-xl font-semibold text-foreground mb-2">No memorials yet</h2>
+            <p className="text-muted-foreground mb-6">Create your first memorial to honor a loved one</p>
             <Link href="/memorials/new">
-              <Button className="bg-amber-500 hover:bg-amber-400 text-slate-900">
+              <Button className="bg-brand text-brand-foreground hover:bg-brand-hover">
                 Create Your First Memorial
               </Button>
             </Link>

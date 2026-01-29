@@ -54,6 +54,7 @@ export type Database = {
         Row: {
           accepted_at: string | null
           access_code: string
+          access_level: Database["public"]["Enums"]["access_level"]
           created_at: string | null
           email: string | null
           expires_at: string | null
@@ -65,6 +66,7 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           access_code?: string
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string | null
           email?: string | null
           expires_at?: string | null
@@ -76,6 +78,7 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           access_code?: string
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string | null
           email?: string | null
           expires_at?: string | null
