@@ -59,10 +59,8 @@ export default async function Home() {
       {/* Header */}
       <header className="border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center">
-              <Heart className="w-4 h-4 text-brand-foreground" />
-            </div>
+          <Link href="/" className="flex items-center gap-2 group">
+            <Heart className="w-4 h-4 text-brand" />
             <span className="font-semibold text-foreground">Memorial</span>
           </Link>
           <nav className="flex items-center gap-4">
@@ -77,12 +75,12 @@ export default async function Home() {
         <section className="max-w-6xl mx-auto px-6 py-20 md:py-32">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 mb-8">
-              <Shield className="w-3 h-3 text-brand-foreground" />
-              <span className="text-xs font-medium text-brand-foreground">Private • Secure • Permanent</span>
+              <Shield className="w-3 h-3 text-brand" />
+              <span className="text-xs font-medium text-brand">Private • Secure • Permanent</span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-foreground mb-6 tracking-tight leading-tight">
               A beautiful place to remember
-              <span className="block text-brand-foreground">those you love</span>
+              <span className="block text-brand">those you love</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
               Create a lasting digital tribute where family and friends come together to share memories,
