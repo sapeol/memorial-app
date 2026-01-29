@@ -1,0 +1,33 @@
+{
+  "name": "Memorial - Digital Tributes",
+  "short_name": "Memorial",
+  "description": "Create private digital memorials to honor and remember loved ones",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Create Memorial",
+      "short_name": "New Memorial",
+      "description": "Create a new memorial",
+      "url": "/memorials/new"
+    }
+  ]
+}
