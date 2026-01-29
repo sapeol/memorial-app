@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -54,19 +53,7 @@ async function AuthHeader() {
   );
 }
 
-export default async function Home({ searchParams }: {
-  searchParams: Promise<{ code?: string; redirect?: string }>
-}) {
-  const params = await searchParams;
-
-  // Handle OAuth callback if code is present (from Google sign-in)
-  if (params.code) {
-    const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(params.code);
-    const redirectTo = params.redirect || '/dashboard';
-    redirect(redirectTo);
-  }
-
+export default async function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-card">
       {/* Header */}
