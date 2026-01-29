@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import withPWA from "@ducanh2912/next-pwa";
 
 const nextConfig: NextConfig = {
-  turbopack: {}, // Enable Turbopack (Next.js 16 default)
+  // Turbopack disabled to resolve Vercel deployment issue
 };
 
 export default withPWA({
