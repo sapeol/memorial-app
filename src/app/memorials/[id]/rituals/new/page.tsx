@@ -72,29 +72,29 @@ export default function NewRitualPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
-      <header className="border-b border-border">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
             onClick={() => router.back()}
-            className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2"
+            className="text-muted-foreground hover:text-foreground text-sm font-semibold flex items-center gap-2 transition-colors"
           >
             ← Back
           </button>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Create a Ritual</h1>
-          <p className="text-muted-foreground">Set up a personal remembrance ritual</p>
+      <main className="max-w-2xl mx-auto px-6 py-16">
+        <div className="mb-12">
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">Create a Ritual</h1>
+          <p className="text-lg text-muted-foreground font-medium">Set up a personal remembrance ritual to honor their life.</p>
         </div>
 
-        <Card className="p-8 bg-card/50 backdrop-blur border-border">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label>Ritual Type</Label>
-              <div className="grid grid-cols-2 gap-3">
+        <Card className="p-10 bg-card border border-border rounded-3xl shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Ritual Type</Label>
+              <div className="grid grid-cols-2 gap-4">
                 {RITUAL_TYPES.map((type) => {
                   const Icon = type.icon
                   return (
@@ -102,62 +102,63 @@ export default function NewRitualPage({
                       key={type.value}
                       type="button"
                       onClick={() => setRitualType(type.value)}
-                      className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                      className={`p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 ${
                         ritualType === type.value
-                          ? 'border-brand bg-brand/10'
-                          : 'border-border hover:border-muted-foreground'
+                          ? 'border-primary bg-primary/5 shadow-sm'
+                          : 'border-border hover:border-primary/20 hover:bg-secondary/20'
                       }`}
                     >
-                      <Icon className="w-6 h-6" />
-                      <span className="text-sm font-medium">{type.label}</span>
+                      <Icon className={`w-8 h-8 ${ritualType === type.value ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <span className={`text-sm font-bold uppercase tracking-wider ${ritualType === type.value ? 'text-primary' : 'text-muted-foreground'}`}>{type.label}</span>
                     </button>
                   )
                 })}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="guestName">Your Name</Label>
+            <div className="space-y-3">
+              <Label htmlFor="guestName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Name</Label>
               <Input
                 id="guestName"
                 type="text"
+                placeholder="How you wish to be remembered"
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
-                className="bg-background border-border text-foreground"
+                className="bg-background border-border text-foreground h-12 rounded-xl"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
+            <div className="space-y-3">
+              <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">A Note of Love</Label>
               <Textarea
                 id="message"
                 placeholder="What does this ritual mean to you?"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                rows={3}
-                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                rows={4}
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-2xl p-4 leading-relaxed"
               />
             </div>
 
             {error && (
-              <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-                <p className="text-destructive text-sm">{error}</p>
+              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20">
+                <p className="text-destructive text-sm font-medium">{error}</p>
               </div>
             )}
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
-                className="border-border text-foreground hover:bg-muted flex-1"
+                className="border-border rounded-full flex-1 h-14 text-lg font-medium"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover flex-1"
+                className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-1 h-14 text-lg font-medium shadow-sm"
               >
                 {loading ? 'Creating...' : 'Create Ritual'}
               </Button>
@@ -166,5 +167,5 @@ export default function NewRitualPage({
         </Card>
       </main>
     </div>
-  )
+  );
 }

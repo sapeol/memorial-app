@@ -71,28 +71,28 @@ export default function NewMediaPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
-      <header className="border-b border-border">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
             onClick={() => router.back()}
-            className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2"
+            className="text-muted-foreground hover:text-foreground text-sm font-semibold flex items-center gap-2 transition-colors"
           >
             ← Back
           </button>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Add Photo</h1>
-          <p className="text-muted-foreground">Share a memory in the gallery</p>
+      <main className="max-w-2xl mx-auto px-6 py-16">
+        <div className="mb-12">
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">Add Photo</h1>
+          <p className="text-lg text-muted-foreground font-medium">Share a cherished memory in the gallery.</p>
         </div>
 
-        <Card className="p-8 bg-card/50 backdrop-blur border-border">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="mediaUrl">Photo *</Label>
+        <Card className="p-10 bg-card border border-border rounded-3xl shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <Label htmlFor="mediaUrl" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">The Photo *</Label>
               <ImageUpload
                 value={mediaUrl}
                 onChange={setMediaUrl}
@@ -101,50 +101,49 @@ export default function NewMediaPage({
                 userId={userId || ''}
                 maxSize={5}
               />
-              <div className="flex items-center gap-2">
+              <div className="mt-4">
                 <Input
                   id="mediaUrl"
                   type="url"
                   placeholder="Or paste an image URL..."
                   value={mediaUrl}
                   onChange={(e) => setMediaUrl(e.target.value)}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">Upload a photo or paste a direct image URL</p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="caption">Caption</Label>
+            <div className="space-y-3">
+              <Label htmlFor="caption" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Caption</Label>
               <Textarea
                 id="caption"
                 placeholder="Describe this memory..."
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
-                rows={3}
-                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                rows={4}
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-2xl p-4 leading-relaxed"
               />
             </div>
 
             {error && (
-              <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-                <p className="text-destructive text-sm">{error}</p>
+              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20">
+                <p className="text-destructive text-sm font-medium">{error}</p>
               </div>
             )}
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
-                className="border-border text-foreground hover:bg-muted flex-1"
+                className="border-border rounded-full flex-1 h-14 text-lg font-medium"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover flex-1"
+                className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-1 h-14 text-lg font-medium shadow-sm"
               >
                 {loading ? 'Adding...' : 'Add Photo'}
               </Button>

@@ -14,12 +14,11 @@ import { createClient } from '@/lib/supabase/client'
 import { Loader2, ArrowLeft, Shield, Trash2, Save, AlertTriangle } from 'lucide-react'
 
 const THEME_COLORS = [
-  { name: 'Slate', value: '#0f172a' },
-  { name: 'Rose', value: '#881337' },
-  { name: 'Amber', value: '#b45309' },
-  { name: 'Emerald', value: '#047857' },
-  { name: 'Sky', value: '#0284c7' },
-  { name: 'Violet', value: '#6d28d9' },
+  { name: 'Slate', value: '#1e293b' },
+  { name: 'Navy', value: '#1e1b4b' },
+  { name: 'Sage', value: '#14532d' },
+  { name: 'Earth', value: '#451a03' },
+  { name: 'Stone', value: '#292524' },
 ]
 
 export default function MemorialSettingsPage({
@@ -42,7 +41,7 @@ export default function MemorialSettingsPage({
   const [passingDate, setPassingDate] = useState<Date | undefined>()
   const [bio, setBio] = useState('')
   const [coverImage, setCoverImage] = useState('')
-  const [themeColor, setThemeColor] = useState('#0f172a')
+  const [themeColor, setThemeColor] = useState('#1e293b')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   useEffect(() => {
@@ -81,7 +80,7 @@ export default function MemorialSettingsPage({
       setPassingDate(memorial.passing_date ? new Date(memorial.passing_date) : undefined)
       setBio(memorial.bio || '')
       setCoverImage(memorial.cover_image || '')
-      setThemeColor(memorial.theme_color || '#0f172a')
+      setThemeColor(memorial.theme_color || '#1e293b')
       setLoading(false)
     }
 
@@ -147,20 +146,20 @@ export default function MemorialSettingsPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-card to-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-brand" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     )
   }
 
   if (!isOwner) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-card to-background flex items-center justify-center p-6">
-        <Card className="max-w-md p-8 bg-card/50 backdrop-blur border-border text-center">
-          <Shield className="w-12 h-12 text-brand mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-foreground mb-2">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">Only the memorial owner can access settings.</p>
-          <Button onClick={() => router.back()} className="bg-brand text-brand-foreground hover:bg-brand-hover">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="max-w-md p-10 bg-card border border-border text-center rounded-3xl shadow-sm">
+          <Shield className="w-16 h-16 text-primary mx-auto mb-6" />
+          <h1 className="text-2xl font-semibold text-foreground mb-3">Access Denied</h1>
+          <p className="text-muted-foreground font-medium mb-8">Only the memorial owner can access these settings.</p>
+          <Button onClick={() => router.back()} className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-8 h-12">
             Go Back
           </Button>
         </Card>
@@ -169,12 +168,12 @@ export default function MemorialSettingsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
-      <header className="border-b border-border sticky top-0 bg-background/80 backdrop-blur z-10">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2"
+            className="text-muted-foreground hover:text-foreground text-sm font-semibold flex items-center gap-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Memorial
@@ -183,25 +182,25 @@ export default function MemorialSettingsPage({
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Memorial Settings</h1>
-          <p className="text-muted-foreground">Manage your memorial settings and preferences</p>
+      <main className="max-w-3xl mx-auto px-6 py-16">
+        <div className="mb-12">
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">Memorial Settings</h1>
+          <p className="text-lg text-muted-foreground font-medium">Manage preferences for this memorial.</p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 mb-6">
-            <p className="text-destructive text-sm">{error}</p>
+          <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 mb-8">
+            <p className="text-destructive text-sm font-medium">{error}</p>
           </div>
         )}
 
         {/* General Settings */}
-        <Card className="p-8 bg-card/50 backdrop-blur border-border mb-6">
-          <form onSubmit={handleSave} className="space-y-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">General Information</h2>
+        <Card className="p-10 bg-card border border-border rounded-3xl shadow-sm mb-10">
+          <form onSubmit={handleSave} className="space-y-8">
+            <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] mb-8">General Information</h2>
 
-            <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
+            <div className="space-y-3">
+              <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Name *</Label>
               <Input
                 id="name"
                 type="text"
@@ -209,21 +208,21 @@ export default function MemorialSettingsPage({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="bg-background border-border text-foreground"
+                className="bg-background border-border text-foreground h-12 rounded-xl"
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Birth Date</Label>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Birth Date</Label>
                 <DatePicker
                   value={birthDate}
                   onChange={setBirthDate}
                   placeholder="Select birth date"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Passing Date</Label>
+              <div className="space-y-3">
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Passing Date</Label>
                 <DatePicker
                   value={passingDate}
                   onChange={setPassingDate}
@@ -232,8 +231,8 @@ export default function MemorialSettingsPage({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="coverImage">Cover Image</Label>
+            <div className="space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Cover Image</Label>
               <ImageUpload
                 value={coverImage}
                 onChange={setCoverImage}
@@ -242,30 +241,30 @@ export default function MemorialSettingsPage({
                 userId={userId || ''}
                 maxSize={5}
               />
-              <div className="flex items-center gap-2">
+              <div className="mt-4">
                 <Input
                   id="coverImage"
                   type="url"
                   placeholder="Or paste an image URL..."
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Theme Color</Label>
-              <div className="flex flex-wrap gap-2">
+            <div className="space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Memorial Theme Tone</Label>
+              <div className="flex flex-wrap gap-4 p-2">
                 {THEME_COLORS.map((color) => (
                   <button
                     key={color.value}
                     type="button"
                     onClick={() => setThemeColor(color.value)}
-                    className={`w-10 h-10 rounded-full border-2 transition-all ${
+                    className={`w-12 h-12 rounded-full border-4 transition-all ${
                       themeColor === color.value
-                        ? 'border-foreground scale-110'
-                        : 'border-transparent hover:scale-105'
+                        ? 'border-primary scale-110 shadow-sm'
+                        : 'border-transparent hover:scale-105 opacity-60 hover:opacity-100'
                     }`}
                     style={{ backgroundColor: color.value }}
                     title={color.name}
@@ -274,32 +273,32 @@ export default function MemorialSettingsPage({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
+            <div className="space-y-3">
+              <Label htmlFor="bio" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Bio</Label>
               <Textarea
                 id="bio"
                 placeholder="Write a brief biography or obituary..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                rows={4}
-                className="bg-background border-border text-foreground"
+                rows={6}
+                className="bg-background border-border text-foreground rounded-2xl p-4 leading-relaxed"
               />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4">
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover"
+                className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-10 h-14 text-lg font-medium shadow-sm"
               >
                 {saving ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Saving...
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Saving Changes...
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className="w-5 h-5 mr-2" />
                     Save Changes
                   </>
                 )}
@@ -309,19 +308,19 @@ export default function MemorialSettingsPage({
         </Card>
 
         {/* Danger Zone */}
-        <Card className="p-6 bg-destructive/5 border-destructive/20">
-          <h2 className="text-lg font-semibold text-destructive mb-2 flex items-center gap-2">
+        <Card className="p-8 bg-destructive/5 border border-destructive/20 rounded-3xl">
+          <h2 className="text-lg font-semibold text-destructive mb-3 flex items-center gap-2 uppercase tracking-widest text-xs">
             <AlertTriangle className="w-5 h-5" />
             Danger Zone
           </h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Once you delete a memorial, there is no going back. Please be certain.
+          <p className="text-muted-foreground font-medium mb-8 leading-relaxed">
+            Deleting a memorial is permanent. All photos, milestones, and memories will be lost forever.
           </p>
           <Button
             variant="destructive"
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="rounded-full px-8 h-12 font-semibold"
           >
             {deleting ? (
               <>
@@ -331,22 +330,22 @@ export default function MemorialSettingsPage({
             ) : (
               <>
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete Memorial
+                Delete Memorial Permanentely
               </>
             )}
           </Button>
 
           {showDeleteConfirm && (
-            <div className="mt-4 p-4 rounded-lg bg-destructive/10 border border-destructive/30">
-              <p className="text-sm text-destructive mb-4">
-                This will permanently delete this memorial, all photos, milestones, guestbook entries, and rituals. This action cannot be undone.
+            <div className="mt-8 p-6 rounded-2xl bg-destructive/10 border border-destructive/30 animate-in fade-in slide-in-from-top-4 duration-300">
+              <p className="text-sm text-destructive mb-6 font-bold leading-relaxed">
+                Are you absolutely sure? This action cannot be undone. All data associated with this memorial will be permanently erased.
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="border-border"
+                  className="border-border rounded-full flex-1 h-12"
                 >
                   Cancel
                 </Button>
@@ -354,7 +353,7 @@ export default function MemorialSettingsPage({
                   variant="destructive"
                   size="sm"
                   onClick={handleDelete}
-                  className="bg-destructive text-destructive-foreground"
+                  className="bg-destructive text-destructive-foreground rounded-full flex-1 h-12"
                 >
                   Yes, Delete Memorial
                 </Button>
@@ -364,5 +363,5 @@ export default function MemorialSettingsPage({
         </Card>
       </main>
     </div>
-  )
+  );
 }

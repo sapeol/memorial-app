@@ -100,13 +100,14 @@ export function ImageUpload({
             className="w-full h-48 md:h-64 rounded-lg bg-cover bg-center border-2 border-dashed border-border"
             style={{ backgroundImage: `url(${preview})` }}
           />
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all rounded-2xl flex items-center justify-center gap-3">
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={handleClick}
               disabled={uploading}
+              className="rounded-full px-5 border-border bg-background"
             >
               <Upload className="w-4 h-4 mr-2" />
               Change
@@ -116,16 +117,17 @@ export function ImageUpload({
               variant="destructive"
               size="sm"
               onClick={handleRemove}
+              className="rounded-full px-5"
             >
               <X className="w-4 h-4 mr-2" />
               Remove
             </Button>
           </div>
           {uploading && (
-            <div className="absolute inset-0 bg-background/80 rounded-lg flex items-center justify-center">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-2xl flex items-center justify-center">
               <div className="text-center">
-                <div className="animate-spin w-8 h-8 border-2 border-brand border-t-transparent rounded-full mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Uploading...</p>
+                <div className="animate-spin w-10 h-10 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3" />
+                <p className="text-sm font-semibold text-primary">Uploading...</p>
               </div>
             </div>
           )}
@@ -135,24 +137,24 @@ export function ImageUpload({
           type="button"
           onClick={handleClick}
           disabled={uploading}
-          className="w-full h-48 md:h-64 rounded-lg border-2 border-dashed border-border hover:border-brand hover:bg-muted/50 transition-colors flex flex-col items-center justify-center gap-3 group"
+          className="w-full h-56 md:h-72 rounded-3xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-secondary/30 transition-all flex flex-col items-center justify-center gap-4 group"
         >
           {uploading ? (
             <>
-              <div className="animate-spin w-12 h-12 border-2 border-brand border-t-transparent rounded-full" />
-              <p className="text-sm text-muted-foreground">Uploading...</p>
+              <div className="animate-spin w-12 h-12 border-2 border-primary border-t-transparent rounded-full" />
+              <p className="text-sm font-semibold text-primary">Uploading...</p>
             </>
           ) : (
             <>
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center group-hover:bg-brand/20 transition-colors">
-                <ImageIcon className="w-8 h-8 text-muted-foreground group-hover:text-brand transition-colors" />
+              <div className="w-20 h-20 rounded-full bg-secondary border border-border flex items-center justify-center group-hover:scale-110 transition-transform">
+                <ImageIcon className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
               <div className="text-center">
-                <p className="text-foreground font-medium">Upload Image</p>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-lg font-semibold text-foreground">Upload Image</p>
+                <p className="text-sm text-muted-foreground mt-1 font-medium">
                   Click to browse or drag and drop
                 </p>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50 mt-4">
                   Max size: {maxSize}MB
                 </p>
               </div>

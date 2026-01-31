@@ -62,7 +62,7 @@ export default function NewGuestbookEntryPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
+    <div className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
@@ -125,7 +125,7 @@ export default function NewGuestbookEntryPage({
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover flex-1"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover flex-1"
               >
                 {loading ? 'Posting...' : 'Post Message'}
               </Button>

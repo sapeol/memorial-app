@@ -55,13 +55,13 @@ export function MediaGrid({ mediaItems, memorialId, currentUserId, isOwner, canA
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12">
-        <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-muted-foreground mb-4">No photos added yet</p>
+      <div className="text-center py-20 bg-secondary/10 rounded-2xl border border-dashed border-border">
+        <ImageIcon className="w-16 h-16 text-muted-foreground/30 mx-auto mb-6" />
+        <p className="text-muted-foreground mb-8 font-medium">No photos added yet</p>
         {canAdd && (
           <Button
             onClick={() => router.push(`/memorials/${memorialId}/media/new`)}
-            className="bg-brand text-brand-foreground hover:bg-brand-hover"
+            className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-8 h-12"
           >
             Add First Photo
           </Button>
@@ -71,48 +71,52 @@ export function MediaGrid({ mediaItems, memorialId, currentUserId, isOwner, canA
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => {
         const canEdit = isOwner || item.uploaded_by === currentUserId
 
         return (
           <div key={item.id} className="group relative">
             <div
-              className="aspect-square rounded-lg bg-cover bg-center"
+              className="aspect-square rounded-2xl bg-cover bg-center border border-border overflow-hidden"
               style={{ backgroundImage: `url(${item.url})` }}
-            />
-
-            {/* Actions overlay on hover */}
-            {canEdit && (
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => router.push(`/memorials/${memorialId}/media/${item.id}/edit`)}
-                  className="bg-background/90 hover:bg-background"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(item.id)}
-                  disabled={deleting === item.id}
-                  className="bg-destructive/90 hover:bg-destructive"
-                >
-                  {deleting === item.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="w-4 h-4 mr-1" />
-                  )}
-                  Delete
-                </Button>
-              </div>
-            )}
+            >
+              {/* Actions overlay on hover */}
+              {canEdit && (
+                <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/memorials/${memorialId}/media/${item.id}/edit`)}
+                    className="rounded-full px-4 h-9 border-border bg-background"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(item.id)}
+                    disabled={deleting === item.id}
+                    className="rounded-full px-4 h-9"
+                  >
+                    {deleting === item.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </div>
 
             {item.caption && (
-              <p className="text-sm text-muted-foreground mt-2">{item.caption}</p>
+              <p className="text-sm text-muted-foreground mt-3 font-medium leading-relaxed italic line-clamp-2 px-1">
+                "{item.caption}"
+              </p>
             )}
           </div>
         )

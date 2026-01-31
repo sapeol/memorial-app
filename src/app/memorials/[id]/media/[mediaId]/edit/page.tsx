@@ -80,14 +80,14 @@ export default function EditMediaPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-card to-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-brand" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
+    <div className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
@@ -147,7 +147,7 @@ export default function EditMediaPage({
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover flex-1"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover flex-1"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </Button>

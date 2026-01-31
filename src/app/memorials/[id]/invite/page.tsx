@@ -112,107 +112,107 @@ export default function InvitePage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
-      <header className="border-b border-border">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
             onClick={() => router.back()}
-            className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2"
+            className="text-muted-foreground hover:text-foreground text-sm font-semibold flex items-center gap-2 transition-colors"
           >
             ← Back
           </button>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Invite Contributors</h1>
-          <p className="text-muted-foreground">
-            Invite friends and family to contribute to this memorial
+      <main className="max-w-2xl mx-auto px-6 py-16">
+        <div className="mb-12">
+          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">Invite Contributors</h1>
+          <p className="text-lg text-muted-foreground font-medium">
+            Invite friends and family to join this private memorial.
           </p>
         </div>
 
-        <Card className="p-8 bg-card/50 backdrop-blur border-border">
+        <Card className="p-10 bg-card border border-border rounded-3xl shadow-sm">
           {!success ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address (Optional)</Label>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Email Address (Optional)</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="friend@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Leave empty to generate a shareable link without sending an email
+                <p className="text-xs text-muted-foreground ml-1 font-medium">
+                  Leave empty to generate a shareable private link.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label>Access Level</Label>
-                <div className="space-y-2">
+              <div className="space-y-3">
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Access Level</Label>
+                <div className="space-y-3">
                   {ACCESS_LEVELS.map((level) => (
                     <button
                       key={level.value}
                       type="button"
                       onClick={() => setAccessLevel(level.value)}
-                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                      className={`w-full p-6 rounded-2xl border-2 text-left transition-all ${
                         accessLevel === level.value
-                          ? 'border-brand bg-brand/10'
-                          : 'border-border hover:border-muted-foreground'
+                          ? 'border-primary bg-primary/5 shadow-sm'
+                          : 'border-border hover:border-primary/20 hover:bg-secondary/20'
                       }`}
                     >
-                      <div className="font-semibold text-foreground">{level.label}</div>
-                      <div className="text-sm text-muted-foreground">{level.description}</div>
+                      <div className="font-bold text-foreground text-lg mb-1">{level.label}</div>
+                      <div className="text-sm text-muted-foreground font-medium leading-relaxed">{level.description}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Personal Message (Optional)</Label>
+              <div className="space-y-3">
+                <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Personal Message (Optional)</Label>
                 <Textarea
                   id="message"
                   placeholder="Add a personal note to your invitation..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  rows={3}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  rows={4}
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-2xl p-4 leading-relaxed"
                 />
               </div>
 
               {error && (
-                <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-                  <p className="text-destructive text-sm">{error}</p>
+                <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20">
+                  <p className="text-destructive text-sm font-medium">{error}</p>
                 </div>
               )}
 
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-brand text-brand-foreground hover:bg-brand-hover"
+                className="w-full bg-primary text-primary-foreground hover:opacity-90 rounded-full h-14 text-lg font-medium shadow-sm"
               >
                 {loading ? 'Creating...' : 'Generate Invitation'}
               </Button>
             </form>
           ) : (
-            <div className="text-center space-y-6">
-              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-                <Mail className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <div className="text-center space-y-8">
+              <div className="w-20 h-20 rounded-full bg-secondary border border-border flex items-center justify-center mx-auto">
+                <Mail className="w-10 h-10 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-2">Invitation Created!</h2>
-                <p className="text-muted-foreground">
-                  Share this link with friends and family to invite them to contribute to the memorial for {memorialName}
+                <h2 className="text-2xl font-semibold text-foreground tracking-tight mb-3">Invitation Created</h2>
+                <p className="text-muted-foreground font-medium max-w-sm mx-auto leading-relaxed">
+                  Share this link with those you want to invite to {memorialName}'s memorial.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-muted border border-border">
-                <p className="text-sm text-muted-foreground mb-2">Invitation Link</p>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-sm bg-background px-3 py-2 rounded overflow-hidden text-ellipsis">
+              <div className="p-6 rounded-2xl bg-secondary/30 border border-border text-left">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 ml-1">Private Invitation Link</p>
+                <div className="flex items-center gap-3">
+                  <code className="flex-1 text-sm bg-background px-4 py-3 rounded-xl overflow-hidden text-ellipsis border border-border font-medium">
                     {generatedLink}
                   </code>
                   <Button
@@ -220,14 +220,24 @@ export default function InvitePage({
                     variant="outline"
                     size="sm"
                     onClick={handleCopyLink}
-                    className="border-border shrink-0"
+                    className="border-border rounded-xl h-11 px-4 transition-all"
                   >
-                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -236,13 +246,13 @@ export default function InvitePage({
                     setEmail('')
                     setMessage('')
                   }}
-                  className="border-border text-foreground hover:bg-muted"
+                  className="border-border rounded-full flex-1 h-12 font-medium"
                 >
                   Create Another
                 </Button>
                 <Button
                   onClick={() => router.push(`/memorials/${memorialId}`)}
-                  className="bg-brand text-brand-foreground hover:bg-brand-hover"
+                  className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-1 h-12 font-medium"
                 >
                   Done
                 </Button>

@@ -45,11 +45,11 @@ export function TimelineItems({ milestones, memorialId, currentUserId, isOwner }
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground mb-4">No milestones added yet</p>
+      <div className="text-center py-20 bg-secondary/10 rounded-2xl border border-dashed border-border">
+        <p className="text-muted-foreground mb-6 font-medium">No milestones added yet</p>
         <Button
           onClick={() => router.push(`/memorials/${memorialId}/timeline/new`)}
-          className="bg-brand text-brand-foreground hover:bg-brand-hover"
+          className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-8 h-12"
         >
           Add First Milestone
         </Button>
@@ -58,45 +58,45 @@ export function TimelineItems({ milestones, memorialId, currentUserId, isOwner }
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {items.map((milestone, index) => {
         const canEdit = isOwner || milestone.submitted_by === currentUserId
         const status = milestone.status || 'pending' // Default to pending if null
 
         return (
-          <div key={milestone.id} className={`flex gap-4 group ${status === 'rejected' ? 'opacity-50' : ''}`}>
+          <div key={milestone.id} className={`flex gap-6 group ${status === 'rejected' ? 'opacity-50' : ''}`}>
             <div className="flex flex-col items-center">
-              <div className={`w-4 h-4 rounded-full ${
-                status === 'approved' ? 'bg-brand' : 
+              <div className={`w-3 h-3 rounded-full mt-2 outline outline-4 outline-background ${
+                status === 'approved' ? 'bg-primary' : 
                 status === 'rejected' ? 'bg-destructive' : 'bg-yellow-500'
               }`} />
-              {index < items.length - 1 && <div className="w-0.5 flex-1 bg-border min-h-16" />}
+              {index < items.length - 1 && <div className="w-px flex-1 bg-border my-2" />}
             </div>
-            <div className="flex-1 pb-6">
+            <div className="flex-1 pb-2">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm text-muted-foreground">
-                      {milestone.event_date ? new Date(milestone.event_date).toLocaleDateString() : ''}
+                  <div className="flex items-center gap-3 mb-2">
+                    <p className="text-sm font-bold text-muted-foreground tracking-wider uppercase">
+                      {milestone.event_date ? new Date(milestone.event_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
                     </p>
                     {status === 'pending' && (
-                      <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
-                        Pending Approval
+                      <span className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border border-yellow-500/20">
+                        Pending
                       </span>
                     )}
                     {status === 'rejected' && (
-                      <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+                      <span className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
                         Rejected
                       </span>
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">{milestone.title}</h3>
+                  <h3 className="text-xl font-semibold text-foreground tracking-tight">{milestone.title}</h3>
                   {milestone.description && (
-                    <p className="text-muted-foreground mt-1">{milestone.description}</p>
+                    <p className="text-muted-foreground mt-2 leading-relaxed">{milestone.description}</p>
                   )}
                   {milestone.location && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
-                      <MapPin className="w-3 h-3" />
+                    <p className="text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-3">
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
                       {milestone.location}
                     </p>
                   )}

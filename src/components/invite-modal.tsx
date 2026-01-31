@@ -148,38 +148,38 @@ export function InviteModal({ memorialId, memorialName, onClose, onInvited }: In
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center">
-            <Mail className="w-5 h-5 text-brand-foreground" />
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-full bg-secondary border border-border flex items-center justify-center">
+            <Mail className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Invite to Memorial</h2>
-            <p className="text-sm text-muted-foreground">{memorialName}</p>
+            <h2 className="text-xl font-semibold text-foreground tracking-tight">Invite to Memorial</h2>
+            <p className="text-sm text-muted-foreground font-medium">{memorialName}</p>
           </div>
         </div>
 
         {error && (
-          <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 mb-4">
-            <p className="text-destructive text-sm">{error}</p>
+          <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 mb-6">
+            <p className="text-destructive text-sm font-medium">{error}</p>
           </div>
         )}
 
         {inviteLink ? (
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <p className="text-sm text-muted-foreground mb-2">Share this link with the person you want to invite:</p>
+          <div className="space-y-6">
+            <div className="p-5 rounded-2xl bg-secondary/30 border border-border">
+              <p className="text-sm text-muted-foreground font-medium mb-3">Share this private link with your loved ones:</p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={inviteLink}
                   readOnly
-                  className="flex-1 px-3 py-2 rounded-md bg-background border border-border text-sm"
+                  className="flex-1 px-4 py-2 rounded-xl bg-background border border-border text-sm font-medium focus:ring-1 focus:ring-primary outline-none"
                 />
                 <Button
                   onClick={copyToClipboard}
                   variant="outline"
                   size="sm"
-                  className="border-border shrink-0"
+                  className="border-border rounded-xl shrink-0 h-10"
                 >
                   {copied ? (
                     <>
@@ -195,57 +195,55 @@ export function InviteModal({ memorialId, memorialName, onClose, onInvited }: In
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              This link will expire in 30 days. The invitee will have {accessLevel === 'contributor' ? 'contributor' : 'visitor'} access.
+            <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+              This link will expire in 30 days. The invitee will have <span className="text-foreground">{accessLevel === 'contributor' ? 'contributor' : 'visitor'}</span> access.
             </p>
-            <Button onClick={onClose} className="w-full bg-brand text-brand-foreground hover:bg-brand-hover">
+            <Button onClick={onClose} className="w-full bg-primary text-primary-foreground hover:opacity-90 rounded-full h-12 font-medium">
               Done
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Button
+          <div className="space-y-6">
+            <div className="flex p-1 bg-secondary/50 rounded-xl border border-border">
+              <button
                 type="button"
-                variant={step === 'link' ? 'default' : 'outline'}
                 onClick={() => setStep('link')}
-                className={`flex-1 ${step === 'link' ? 'bg-brand text-brand-foreground hover:bg-brand-hover' : 'border-border'}`}
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${step === 'link' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 Copy Link
-              </Button>
-              <Button
+              </button>
+              <button
                 type="button"
-                variant={step === 'email' ? 'default' : 'outline'}
                 onClick={() => setStep('email')}
-                className={`flex-1 ${step === 'email' ? 'bg-brand text-brand-foreground hover:bg-brand-hover' : 'border-border'}`}
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${step === 'email' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 Send Email
-              </Button>
+              </button>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="accessLevel">Access Level</Label>
+              <Label htmlFor="accessLevel" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Access Level</Label>
               <Select value={accessLevel} onValueChange={(v: any) => setAccessLevel(v)}>
-                <SelectTrigger className="bg-background border-border">
+                <SelectTrigger className="bg-background border-border h-12 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="visitor">Visitor - Can view and sign guestbook</SelectItem>
-                  <SelectItem value="contributor">Contributor - Can add photos, milestones, and guestbook entries</SelectItem>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="visitor">Visitor — View & Sign</SelectItem>
+                  <SelectItem value="contributor">Contributor — Add Photos & Stories</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {step === 'email' && (
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="friend@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-background border-border"
+                  className="bg-background border-border h-12 rounded-xl"
                 />
               </div>
             )}
@@ -253,11 +251,11 @@ export function InviteModal({ memorialId, memorialName, onClose, onInvited }: In
             <Button
               onClick={step === 'email' ? sendEmailInvite : generateInviteLink}
               disabled={loading}
-              className="w-full bg-brand text-brand-foreground hover:bg-brand-hover"
+              className="w-full bg-primary text-primary-foreground hover:opacity-90 rounded-full h-14 text-lg font-medium"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   Generating...
                 </>
               ) : step === 'email' ? (

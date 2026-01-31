@@ -44,26 +44,24 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background via-card to-background p-6">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+      <div className="absolute top-8 right-8">
         <ThemeToggle />
       </div>
-      <Card className="w-full max-w-md p-8 bg-card/50 backdrop-blur border-border">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center">
-              <span className="text-white">✦</span>
-            </div>
-            <span className="text-foreground text-xl font-medium">Memorial</span>
-          </div>
-          <h1 className="text-2xl font-semibold text-foreground mb-2">Welcome back</h1>
-          <p className="text-muted-foreground text-sm">Sign in to access your memorials</p>
+      <Card className="w-full max-w-md p-10 bg-card border-border shadow-sm rounded-3xl">
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
+            <Heart className="w-6 h-6 text-primary" />
+            <span className="text-foreground text-2xl font-semibold tracking-tight">Memorial</span>
+          </Link>
+          <h1 className="text-2xl font-semibold text-foreground mb-3">Welcome back</h1>
+          <p className="text-muted-foreground font-medium">Sign in to access your memorials</p>
         </div>
 
         {/* Google Sign-In Button */}
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-border bg-background text-foreground hover:bg-muted transition-colors mb-6"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-border bg-background text-foreground hover:bg-secondary transition-colors mb-8 font-medium h-12"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -83,21 +81,21 @@ export default function SignInPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          <span className="font-medium">Continue with Google</span>
+          <span>Continue with Google</span>
         </button>
 
-        <div className="relative mb-6">
+        <div className="relative mb-8">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-transparent px-2 text-muted-foreground">or continue with email</span>
+          <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold">
+            <span className="bg-card px-4 text-muted-foreground">or email</span>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-1">Email</Label>
             <Input
               id="email"
               type="email"
@@ -105,12 +103,12 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+              className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-1">Password</Label>
             <Input
               id="password"
               type="password"
@@ -118,28 +116,28 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+              className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
             />
           </div>
 
           {error && (
-            <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-              <p className="text-destructive text-sm">{error}</p>
+            <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20">
+              <p className="text-destructive text-sm font-medium">{error}</p>
             </div>
           )}
 
           <Button
             type="submit"
-            className="w-full bg-brand text-brand-foreground hover:bg-brand-hover"
+            className="w-full bg-primary text-primary-foreground hover:opacity-90 h-12 rounded-full text-lg font-medium"
             disabled={loading}
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
 
-        <p className="text-center text-muted-foreground text-sm mt-6">
+        <p className="text-center text-muted-foreground text-sm mt-8 font-medium">
           Don't have an account?{' '}
-          <Link href="/sign-up" className="text-brand-foreground hover:text-brand-foreground dark:hover:text-brand-foreground">
+          <Link href="/sign-up" className="text-primary hover:underline underline-offset-4">
             Sign up
           </Link>
         </p>

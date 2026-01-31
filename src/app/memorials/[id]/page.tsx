@@ -102,11 +102,11 @@ export default async function MemorialPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-card to-background">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border sticky top-0 bg-background/80 backdrop-blur z-10">
+      <header className="border-b border-border sticky top-0 bg-background/95 backdrop-blur z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2">
+          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground text-sm font-medium flex items-center gap-2 transition-colors">
             ← Back to Dashboard
           </Link>
           <div className="flex items-center gap-4">
@@ -115,43 +115,45 @@ export default async function MemorialPage({
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
-        <div className="mb-8">
+        <div className="mb-12">
           {memorial.cover_image && (
             <div
-              className="w-full h-64 md:h-80 rounded-2xl bg-cover bg-center mb-6 relative"
+              className="w-full h-72 md:h-96 rounded-3xl bg-cover bg-center mb-10 relative overflow-hidden border border-border"
               style={{ backgroundImage: `url(${memorial.cover_image})` }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent rounded-2xl" />
+              <div className="absolute inset-0 bg-black/10" />
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h1 className="text-4xl font-semibold text-foreground mb-2">{memorial.name}</h1>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl font-semibold text-foreground tracking-tight">{memorial.name}</h1>
               {memorial.birth_date && memorial.passing_date && (
-                <div className="flex items-center gap-4 text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(memorial.birth_date).toLocaleDateString()} - {new Date(memorial.passing_date).toLocaleDateString()}
+                <div className="flex flex-wrap items-center gap-6 text-muted-foreground font-medium">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    {new Date(memorial.birth_date).toLocaleDateString()} — {new Date(memorial.passing_date).toLocaleDateString()}
                   </span>
-                  <span>({calculateAge(memorial.birth_date, memorial.passing_date)} years old)</span>
+                  <span className="bg-secondary px-3 py-1 rounded-full text-sm">
+                    {calculateAge(memorial.birth_date, memorial.passing_date)} years old
+                  </span>
                 </div>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {(isOwner || userAccessLevel === 'contributor') && (
                 <>
                   <Link href={`/memorials/${id}/timeline/new`}>
-                    <Button variant="outline" size="sm" className="border-border">
+                    <Button variant="outline" size="sm" className="border-border rounded-full px-5">
                       <Timer className="w-4 h-4 mr-2" />
                       Add Milestone
                     </Button>
                   </Link>
                   <Link href={`/memorials/${id}/media/new`}>
-                    <Button variant="outline" size="sm" className="border-border">
+                    <Button variant="outline" size="sm" className="border-border rounded-full px-5">
                       <Image className="w-4 h-4 mr-2" />
                       Add Photo
                     </Button>
@@ -165,54 +167,56 @@ export default async function MemorialPage({
           </div>
 
           {memorial.bio && (
-            <p className="text-muted-foreground mt-4 max-w-3xl leading-relaxed">{memorial.bio}</p>
+            <div className="mt-8 p-6 bg-card border border-border rounded-2xl">
+              <p className="text-lg text-muted-foreground leading-relaxed italic">"{memorial.bio}"</p>
+            </div>
           )}
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="bg-muted/50 border border-border w-full justify-start rounded-lg h-auto p-1">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-background">Overview</TabsTrigger>
-            <TabsTrigger value="timeline" className="data-[state=active]:bg-background">
+          <TabsList className="bg-secondary/50 border border-border w-full justify-start rounded-xl h-auto p-1.5 mb-8">
+            <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">Overview</TabsTrigger>
+            <TabsTrigger value="timeline" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">
               Timeline ({milestones?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="gallery" className="data-[state=active]:bg-background">
+            <TabsTrigger value="gallery" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">
               Gallery ({mediaItems?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="guestbook" className="data-[state=active]:bg-background">
+            <TabsTrigger value="guestbook" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">
               Guestbook ({guestbookEntries?.length ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="rituals" className="data-[state=active]:bg-background">
+            <TabsTrigger value="rituals" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">
               Rituals ({rituals?.length ?? 0})
             </TabsTrigger>
             {isOwner && (
-              <TabsTrigger value="participants" className="data-[state=active]:bg-background">
+              <TabsTrigger value="participants" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6 py-2.5 font-medium">
                 Participants ({participants?.length ?? 0})
               </TabsTrigger>
             )}
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="mt-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <TabsContent value="overview" className="mt-0">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Timeline Preview */}
-              <Card className="p-6 bg-card/50 backdrop-blur border-border">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Timer className="w-5 h-5 text-brand" />
+              <Card className="p-8 bg-card border border-border rounded-2xl shadow-sm">
+                <h3 className="font-semibold text-foreground mb-6 flex items-center gap-3 text-lg">
+                  <Timer className="w-6 h-6 text-primary" />
                   Life Story
                 </h3>
                 {milestones && milestones.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {milestones.slice(0, 3).map((milestone) => (
                       <div key={milestone.id} className="text-sm">
-                        <p className="text-foreground font-medium">{milestone.title}</p>
-                        <p className="text-muted-foreground">
+                        <p className="text-foreground font-semibold">{milestone.title}</p>
+                        <p className="text-muted-foreground mt-1">
                           {milestone.event_date ? new Date(milestone.event_date).toLocaleDateString() : ''}
                         </p>
                       </div>
                     ))}
-                    <Link href={`/memorials/${id}?tab=timeline`} className="text-brand-foreground text-sm hover:underline">
-                      View all →
+                    <Link href={`/memorials/${id}?tab=timeline`} className="text-primary font-semibold text-sm hover:underline inline-flex items-center gap-1 mt-2">
+                      View all timeline <span className="text-lg">→</span>
                     </Link>
                   </div>
                 ) : (
@@ -221,20 +225,25 @@ export default async function MemorialPage({
               </Card>
 
               {/* Gallery Preview */}
-              <Card className="p-6 bg-card/50 backdrop-blur border-border">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Image className="w-5 h-5 text-brand" />
+              <Card className="p-8 bg-card border border-border rounded-2xl shadow-sm">
+                <h3 className="font-semibold text-foreground mb-6 flex items-center gap-3 text-lg">
+                  <Image className="w-6 h-6 text-primary" />
                   Memories
                 </h3>
                 {mediaItems && mediaItems.length > 0 ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    {mediaItems.slice(0, 6).map((item) => (
-                      <div
-                        key={item.id}
-                        className="aspect-square rounded-md bg-cover bg-center"
-                        style={{ backgroundImage: `url(${item.url})` }}
-                      />
-                    ))}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-2">
+                      {mediaItems.slice(0, 6).map((item) => (
+                        <div
+                          key={item.id}
+                          className="aspect-square rounded-lg bg-cover bg-center border border-border/50"
+                          style={{ backgroundImage: `url(${item.url})` }}
+                        />
+                      ))}
+                    </div>
+                    <Link href={`/memorials/${id}?tab=gallery`} className="text-primary font-semibold text-sm hover:underline inline-flex items-center gap-1 mt-2">
+                      View gallery <span className="text-lg">→</span>
+                    </Link>
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm">No photos added yet</p>
@@ -242,23 +251,23 @@ export default async function MemorialPage({
               </Card>
 
               {/* Guestbook Preview */}
-              <Card className="p-6 bg-card/50 backdrop-blur border-border">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-brand" />
+              <Card className="p-8 bg-card border border-border rounded-2xl shadow-sm">
+                <h3 className="font-semibold text-foreground mb-6 flex items-center gap-3 text-lg">
+                  <MessageSquare className="w-6 h-6 text-primary" />
                   Messages
                 </h3>
                 {guestbookEntries && guestbookEntries.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {guestbookEntries.slice(0, 2).map((entry) => (
-                      <div key={entry.id} className="text-sm">
-                        <p className="text-foreground line-clamp-2">{entry.message}</p>
-                        <p className="text-muted-foreground text-xs mt-1">
-                          {entry.author_name}
+                      <div key={entry.id} className="text-sm bg-secondary/30 p-3 rounded-lg border border-border/50">
+                        <p className="text-foreground line-clamp-2 leading-relaxed font-medium">"{entry.message}"</p>
+                        <p className="text-muted-foreground text-xs mt-2 font-bold uppercase tracking-wider">
+                          — {entry.author_name}
                         </p>
                       </div>
                     ))}
-                    <Link href={`/memorials/${id}?tab=guestbook`} className="text-brand-foreground text-sm hover:underline">
-                      View all →
+                    <Link href={`/memorials/${id}?tab=guestbook`} className="text-primary font-semibold text-sm hover:underline inline-flex items-center gap-1 mt-2">
+                      Read guestbook <span className="text-lg">→</span>
                     </Link>
                   </div>
                 ) : (
@@ -269,13 +278,13 @@ export default async function MemorialPage({
           </TabsContent>
 
           {/* Timeline Tab */}
-          <TabsContent value="timeline" className="mt-6">
-            <Card className="p-8 bg-card/50 backdrop-blur border-border">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Life Story Timeline</h2>
+          <TabsContent value="timeline" className="mt-0">
+            <Card className="p-8 md:p-12 bg-card border border-border rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-semibold text-foreground">Life Story Timeline</h2>
                 {(isOwner || userAccessLevel === 'contributor') && (
                   <Link href={`/memorials/${id}/timeline/new`}>
-                    <Button size="sm" className="bg-brand text-brand-foreground hover:bg-brand-hover">
+                    <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-6">
                       Add Milestone
                     </Button>
                   </Link>
@@ -292,13 +301,13 @@ export default async function MemorialPage({
           </TabsContent>
 
           {/* Gallery Tab */}
-          <TabsContent value="gallery" className="mt-6">
-            <Card className="p-8 bg-card/50 backdrop-blur border-border">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Media Gallery</h2>
+          <TabsContent value="gallery" className="mt-0">
+            <Card className="p-8 md:p-12 bg-card border border-border rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-semibold text-foreground">Media Gallery</h2>
                 {(isOwner || userAccessLevel === 'contributor') && (
                   <Link href={`/memorials/${id}/media/new`}>
-                    <Button size="sm" className="bg-brand text-brand-foreground hover:bg-brand-hover">
+                    <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-6">
                       Add Photo
                     </Button>
                   </Link>
@@ -316,12 +325,12 @@ export default async function MemorialPage({
           </TabsContent>
 
           {/* Guestbook Tab */}
-          <TabsContent value="guestbook" className="mt-6">
-            <Card className="p-8 bg-card/50 backdrop-blur border-border">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Guestbook</h2>
+          <TabsContent value="guestbook" className="mt-0">
+            <Card className="p-8 md:p-12 bg-card border border-border rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-semibold text-foreground">Guestbook</h2>
                 <Link href={`/memorials/${id}/guestbook/new`}>
-                  <Button size="sm" className="bg-brand text-brand-foreground hover:bg-brand-hover">
+                  <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-6">
                     Leave Message
                   </Button>
                 </Link>
@@ -337,42 +346,44 @@ export default async function MemorialPage({
           </TabsContent>
 
           {/* Rituals Tab */}
-          <TabsContent value="rituals" className="mt-6">
-            <Card className="p-8 bg-card/50 backdrop-blur border-border">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Digital Rituals</h2>
+          <TabsContent value="rituals" className="mt-0">
+            <Card className="p-8 md:p-12 bg-card border border-border rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-semibold text-foreground">Digital Rituals</h2>
                 <Link href={`/memorials/${id}/rituals/new`}>
-                  <Button size="sm" className="bg-brand text-brand-foreground hover:bg-brand-hover">
+                  <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-6">
                     Create Ritual
                   </Button>
                 </Link>
               </div>
 
               {rituals && rituals.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {rituals.map((ritual) => (
-                    <div key={ritual.id} className="p-4 rounded-lg bg-background border border-border">
-                      <div className="flex items-center gap-2 mb-2">
-                        {ritual.ritual_type === 'candle' && <Flame className="w-5 h-5 text-brand" />}
-                        {ritual.ritual_type === 'flower' && <Flower2 className="w-5 h-5 text-brand" />}
-                        {ritual.ritual_type === 'heart' && <Heart className="w-5 h-5 text-brand" />}
-                        <h3 className="font-semibold text-foreground">{ritual.message || 'Untitled'}</h3>
+                    <div key={ritual.id} className="p-6 rounded-2xl bg-secondary/20 border border-border">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center">
+                          {ritual.ritual_type === 'candle' && <Flame className="w-5 h-5 text-primary" />}
+                          {ritual.ritual_type === 'flower' && <Flower2 className="w-5 h-5 text-primary" />}
+                          {ritual.ritual_type === 'heart' && <Heart className="w-5 h-5 text-primary" />}
+                        </div>
+                        <h3 className="font-semibold text-foreground">{ritual.message || 'Sent with Love'}</h3>
                       </div>
                       {ritual.guest_name && (
-                        <p className="text-sm text-muted-foreground">by {ritual.guest_name}</p>
+                        <p className="text-sm text-muted-foreground font-medium">from {ritual.guest_name}</p>
                       )}
-                      <p className="text-xs text-muted-foreground mt-2">
-                        {ritual.created_at ? `Created ${new Date(ritual.created_at).toLocaleDateString()}` : ''}
+                      <p className="text-xs text-muted-foreground mt-4 font-bold uppercase tracking-wider">
+                        {ritual.created_at ? new Date(ritual.created_at).toLocaleDateString() : ''}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <Flame className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">No rituals created yet</p>
+                <div className="text-center py-20 bg-secondary/10 rounded-2xl border border-dashed border-border">
+                  <Flame className="w-16 h-16 text-muted-foreground/30 mx-auto mb-6" />
+                  <p className="text-lg text-muted-foreground mb-8">No rituals created yet</p>
                   <Link href={`/memorials/${id}/rituals/new`}>
-                    <Button className="bg-brand text-brand-foreground hover:bg-brand-hover">
+                    <Button className="bg-primary text-primary-foreground hover:opacity-90 rounded-full px-8 h-12">
                       Create First Ritual
                     </Button>
                   </Link>
@@ -383,7 +394,7 @@ export default async function MemorialPage({
 
           {/* Participants Tab - Owner only */}
           {isOwner && (
-            <TabsContent value="participants" className="mt-6">
+            <TabsContent value="participants" className="mt-0">
               <ParticipantsList
                 memorialId={id}
                 memorialName={memorial.name}
