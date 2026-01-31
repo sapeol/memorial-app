@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,63 +9,49 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/lib/supabase/client'
 import { ImageUpload } from '@/components/image-upload'
+import { useAuthStore } from '@/lib/store/auth-store'
+import { ArrowLeft, Image as ImageIcon, Loader2 } from 'lucide-react'
 
-export default function NewMediaPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+/**
+ * Page for adding new media items (photos) to a memorial.
+ * Leverages global auth store and modular components.
+ */
+export default function NewMediaPage() {
   const router = useRouter()
+  const params = useParams()
+  const memorialId = params.id as string
+  const { user } = useAuthStore()
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [memorialId, setMemorialId] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null)
-
   const [mediaUrl, setMediaUrl] = useState('')
   const [caption, setCaption] = useState('')
-  const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo')
-
-  useEffect(() => {
-    // Get memorial ID from params
-    Promise.resolve(params).then(({ id }) => setMemorialId(id))
-    // Get current user
-    createClient().auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id)
-    })
-  }, [params])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!memorialId) return
+    if (!memorialId || !user) return
 
     setError(null)
     setLoading(true)
 
     try {
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) {
-        router.push('/sign-in')
-        return
-      }
-
       const { error: insertError } = await supabase
         .from('media_items')
         .insert({
           memorial_id: memorialId,
           url: mediaUrl,
           caption,
-          media_type: mediaType,
+          media_type: 'photo',
           uploaded_by: user.id,
         })
 
       if (insertError) throw insertError
 
+      // Return to memorial gallery
       router.push(`/memorials/${memorialId}?tab=gallery`)
     } catch (err: any) {
       setError(err.message || 'Failed to add photo')
-    } finally {
       setLoading(false)
     }
   }
@@ -76,16 +62,16 @@ export default function NewMediaPage({
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
             onClick={() => router.back()}
-            className="text-muted-foreground hover:text-foreground text-sm font-semibold flex items-center gap-2 transition-colors"
+            className="text-muted-foreground hover:text-foreground text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer uppercase tracking-widest text-[10px]"
           >
-            ← Back
+            <ArrowLeft className="w-3 h-3" /> Back
           </button>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-16">
         <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3">Add Photo</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-3">Add Photo</h1>
           <p className="text-lg text-muted-foreground font-medium">Share a cherished memory in the gallery.</p>
         </div>
 
@@ -97,8 +83,8 @@ export default function NewMediaPage({
                 value={mediaUrl}
                 onChange={setMediaUrl}
                 onRemove={() => setMediaUrl('')}
-                uploadPath={`memorial-${memorialId || 'temp'}`}
-                userId={userId || ''}
+                uploadPath={`memorial-${memorialId}`}
+                userId={user?.id || ''}
                 maxSize={5}
               />
               <div className="mt-4">
@@ -108,7 +94,7 @@ export default function NewMediaPage({
                   placeholder="Or paste an image URL..."
                   value={mediaUrl}
                   onChange={(e) => setMediaUrl(e.target.value)}
-                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 rounded-xl font-medium"
                 />
               </div>
             </div>
@@ -121,13 +107,13 @@ export default function NewMediaPage({
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 rows={4}
-                className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-2xl p-4 leading-relaxed"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-2xl p-4 leading-relaxed font-medium"
               />
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20">
-                <p className="text-destructive text-sm font-medium">{error}</p>
+              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 shake">
+                <p className="text-destructive text-sm font-bold">{error}</p>
               </div>
             )}
 
@@ -136,16 +122,21 @@ export default function NewMediaPage({
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
-                className="border-border rounded-full flex-1 h-14 text-lg font-medium"
+                className="border-border rounded-full flex-1 h-14 text-lg font-bold cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={loading}
-                className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-1 h-14 text-lg font-medium shadow-sm"
+                disabled={loading || !mediaUrl}
+                className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-[2] h-14 text-lg font-bold shadow-sm cursor-pointer"
               >
-                {loading ? 'Adding...' : 'Add Photo'}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Adding...
+                  </span>
+                ) : 'Add to Gallery'}
               </Button>
             </div>
           </form>

@@ -19,17 +19,8 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 export default function DashboardPage() {
   const router = useRouter()
   
-  // Sync auth state globally
-  useAuthSync()
-  
   const { user, initialized } = useAuthStore()
   const { memorials, loading } = useMemorials()
-
-  // Redirect if not authenticated after initialization
-  if (initialized && !user) {
-    router.push('/sign-in')
-    return null
-  }
 
   const myMemorials = memorials?.filter((m) => m.owner_id === user?.id) ?? []
   const contributedMemorials = memorials?.filter((m) => m.owner_id !== user?.id) ?? []

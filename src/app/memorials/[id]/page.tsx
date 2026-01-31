@@ -22,51 +22,57 @@ import { formatDateShort } from '@/lib/utils/format'
 
 /**
  * Detailed memorial page displaying the life story, gallery, guestbook, and rituals.
+ * Uses custom hooks for data management and global state for authentication.
  */
 export default function MemorialPage() {
   const params = useParams()
   const id = params.id as string
   const router = useRouter()
   
-  useAuthSync()
   const { user, initialized } = useAuthStore()
+  
+  // Local memorial data fetching via custom hook
   const { memorial, loading, error } = useMemorial(id)
   
+  // Local state for related entities
   const [participants, setParticipants] = useState<any[]>([])
   const [milestones, setMilestones] = useState<any[]>([])
   const [mediaItems, setMediaItems] = useState<any[]>([])
   const [guestbookEntries, setGuestbookEntries] = useState<any[]>([])
   const [rituals, setRituals] = useState<any[]>([])
 
-  useEffect(() => {
-    if (initialized && !user) {
-      router.push(`/sign-in?redirect=/memorials/${id}`)
-    }
-  }, [user, initialized, router, id])
-
+  /**
+   * Effect: Fetch related details for the memorial once the core record is available.
+   * Fetches participants, milestones, media, guestbook, and rituals in parallel.
+   */
   useEffect(() => {
     async function fetchDetails() {
       if (!memorial) return
       const supabase = createClient()
 
-      const [p, m, mi, g, r] = await Promise.all([
-        supabase.from('memorial_participants').select('*').eq('memorial_id', id).order('created_at', { ascending: true }),
-        supabase.from('milestones').select('*').eq('memorial_id', id).order('event_date', { ascending: true }),
-        supabase.from('media_items').select('*').eq('memorial_id', id).order('created_at', { ascending: false }),
-        supabase.from('guestbook_entries').select('*').eq('memorial_id', id).order('created_at', { ascending: false }),
-        supabase.from('rituals').select('*').eq('memorial_id', id).order('created_at', { ascending: false })
-      ])
+      try {
+        const [p, m, mi, g, r] = await Promise.all([
+          supabase.from('memorial_participants').select('*').eq('memorial_id', id).order('created_at', { ascending: true }),
+          supabase.from('milestones').select('*').eq('memorial_id', id).order('event_date', { ascending: true }),
+          supabase.from('media_items').select('*').eq('memorial_id', id).order('created_at', { ascending: false }),
+          supabase.from('guestbook_entries').select('*').eq('memorial_id', id).order('created_at', { ascending: false }),
+          supabase.from('rituals').select('*').eq('memorial_id', id).order('created_at', { ascending: false })
+        ])
 
-      setParticipants(p.data || [])
-      setMilestones(m.data || [])
-      setMediaItems(mi.data || [])
-      setGuestbookEntries(g.data || [])
-      setRituals(r.data || [])
+        if (p.data) setParticipants(p.data)
+        if (m.data) setMilestones(m.data)
+        if (mi.data) setMediaItems(mi.data)
+        if (g.data) setGuestbookEntries(g.data)
+        if (r.data) setRituals(r.data)
+      } catch (err) {
+        console.error('Failed to fetch memorial details:', err)
+      }
     }
 
     fetchDetails()
   }, [id, memorial])
 
+  // Loading state with serene backdrop
   if (!initialized || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -75,14 +81,19 @@ export default function MemorialPage() {
     )
   }
 
+  // Error handling or missing memorial
   if (error || !memorial) {
     router.push('/dashboard')
     return null
   }
 
+  // Access control checks
   const isOwner = memorial.owner_id === user?.id
   const userAccessLevel = memorial.memorial_participants?.[0]?.access_level || (isOwner ? 'owner' : 'visitor')
 
+  /**
+   * Utility: Calculate age based on birth and passing dates.
+   */
   const calculateAge = (birthDate: string, passingDate: string) => {
     const birth = new Date(birthDate)
     const passing = new Date(passingDate)
@@ -94,6 +105,7 @@ export default function MemorialPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Sticky Header with Navigation and Profile */}
       <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="text-muted-foreground hover:text-foreground text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer uppercase tracking-widest text-[10px]">
@@ -107,7 +119,7 @@ export default function MemorialPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-12">
-        {/* Hero Banner & Profile Section */}
+        {/* Memorial Hero Section: Cover Image and Identity */}
         <div className="mb-16">
           {memorial.cover_image && (
             <div
@@ -136,6 +148,7 @@ export default function MemorialPage() {
               )}
             </div>
 
+            {/* Quick Action Buttons for Contributors */}
             <div className="flex flex-wrap gap-4">
               {(isOwner || userAccessLevel === 'contributor') && (
                 <>
@@ -159,6 +172,7 @@ export default function MemorialPage() {
             </div>
           </div>
 
+          {/* Biography/Tribute Statement */}
           {memorial.bio && (
             <div className="mt-12 p-8 md:p-12 bg-card border border-border rounded-[32px] shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/20" />
@@ -167,7 +181,7 @@ export default function MemorialPage() {
           )}
         </div>
 
-        {/* Content Tabs */}
+        {/* Modular Content Sections via Tabs */}
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="bg-secondary/50 border border-border w-full justify-start rounded-2xl h-auto p-1.5 mb-12 overflow-x-auto">
             <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md px-8 py-3 font-bold uppercase tracking-widest text-[10px] cursor-pointer">Overview</TabsTrigger>
@@ -190,7 +204,7 @@ export default function MemorialPage() {
             )}
           </TabsList>
 
-          {/* Overview Tab */}
+          {/* Overview Section: Previews of main content */}
           <TabsContent value="overview" className="mt-0 outline-none">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Timeline Preview */}
@@ -252,7 +266,7 @@ export default function MemorialPage() {
             </div>
           </TabsContent>
 
-          {/* Main Content Tabs */}
+          {/* Full Lifecycle Content Tabs */}
           <TabsContent value="timeline" className="mt-0 outline-none">
             <Card className="p-10 md:p-16 bg-card border border-border rounded-[40px] shadow-sm">
               <div className="flex items-center justify-between mb-12">
@@ -299,6 +313,7 @@ export default function MemorialPage() {
             </Card>
           </TabsContent>
 
+          {/* Rituals: Virtual tributes */}
           <TabsContent value="rituals" className="mt-0 outline-none">
             <Card className="p-10 md:p-16 bg-card border border-border rounded-[40px] shadow-sm">
               <div className="flex items-center justify-between mb-12">
@@ -343,6 +358,7 @@ export default function MemorialPage() {
             </Card>
           </TabsContent>
 
+          {/* Access Control (Owner only) */}
           {isOwner && (
             <TabsContent value="participants" className="mt-0 outline-none">
               <ParticipantsList
@@ -360,7 +376,17 @@ export default function MemorialPage() {
   )
 }
 
-function PreviewCard({ title, icon: Icon, href, children, empty, emptyText }: any) {
+/**
+ * Shared preview card component for the overview dashboard.
+ */
+function PreviewCard({ title, icon: Icon, href, children, empty, emptyText }: { 
+  title: string, 
+  icon: any, 
+  href: string, 
+  children: React.ReactNode, 
+  empty: boolean, 
+  emptyText: string 
+}) {
   return (
     <Card className="p-10 bg-card border border-border rounded-[32px] shadow-sm flex flex-col h-full">
       <h3 className="font-black text-muted-foreground mb-8 flex items-center gap-3 text-xs uppercase tracking-[0.3em]">

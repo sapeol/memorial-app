@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ProfileDropdown } from "@/components/profile-dropdown";
+import { ScrollLink } from "@/components/scroll-link";
 import {
   Heart,
   Image as ImageIcon,
@@ -40,9 +41,9 @@ async function AuthHeader() {
 
   return (
     <div className="flex items-center gap-6">
-      <Link href="#how-it-works" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-[0.2em] hidden md:block cursor-pointer">
+      <ScrollLink href="#how-it-works" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-[0.2em] hidden md:block">
         How It Works
-      </Link>
+      </ScrollLink>
       <Link href="/sign-in">
         <Button variant="ghost" size="sm" className="font-bold uppercase tracking-widest text-[10px] cursor-pointer">
           Sign In
@@ -91,11 +92,11 @@ export default async function Home() {
                   Create a Memorial
                 </Button>
               </Link>
-              <Link href="#how-it-works">
+              <ScrollLink href="#how-it-works">
                 <Button size="lg" variant="outline" className="border-border min-w-[200px] h-14 text-lg rounded-full font-bold cursor-pointer">
                   See How It Works
                 </Button>
-              </Link>
+              </ScrollLink>
             </div>
           </div>
         </section>

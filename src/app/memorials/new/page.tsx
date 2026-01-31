@@ -57,10 +57,8 @@ export default function NewMemorialPage() {
   } = useMemorialFormStore()
 
   useEffect(() => {
-    createClient().auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id)
-    })
-  }, [])
+    if (user) setUserId(user.id)
+  }, [user])
 
   const handleSubmit = async () => {
     setError(null)

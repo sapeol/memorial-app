@@ -96,7 +96,7 @@ export function ProfileDropdown() {
             <Settings className="mr-3 h-4 w-4 text-primary" />
             <span className="font-semibold text-sm">Settings</span>
           </DropdownMenuItem>
-        </MenuGroup>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-border/50" />
         <div className="p-1">
           <DropdownMenuItem 
