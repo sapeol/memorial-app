@@ -49,6 +49,7 @@
 
 :root {
   --radius: 0.5rem;
+  scroll-behavior: smooth;
   /* Serene Stone Light Theme - WCAG AAA focus */
   --background: oklch(0.99 0.002 60);
   --foreground: oklch(0.08 0.005 60);
