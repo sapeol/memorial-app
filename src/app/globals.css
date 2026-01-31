@@ -120,6 +120,30 @@
   --sidebar-ring: oklch(0.96 0.005 250);
 }
 
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Accessibility: Clear interactive indicators */
+  button, 
+  [role="button"],
+  a,
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    @apply cursor-pointer;
+  }
+
+  /* Improved focus states for keyboard navigation */
+  :focus-visible {
+    @apply outline-2 outline-primary outline-offset-2;
+  }
+}
+
 @layer utilities {
   .shake {
     animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;

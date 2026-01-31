@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ProfileDropdown } from "@/components/profile-dropdown";
 import {
   Heart,
   Image as ImageIcon,
@@ -12,9 +12,13 @@ import {
   Lock,
   Shield,
   Calendar,
-  Sparkles,
+  User,
 } from "lucide-react";
 
+/**
+ * Authentication header section for the landing page.
+ * Displays profile dropdown if logged in, or sign-in links if not.
+ */
 async function AuthHeader() {
   const supabase = await createClient();
   const {
@@ -23,29 +27,24 @@ async function AuthHeader() {
 
   if (session) {
     return (
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+      <div className="flex items-center gap-6">
+        <Link href="/dashboard" className="hidden sm:block">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-bold uppercase tracking-widest text-[10px] cursor-pointer">
             Dashboard
           </Button>
         </Link>
-        <span className="text-sm text-muted-foreground hidden sm:inline">{session.user.email}</span>
-        <form action="/auth/sign-out" method="post">
-          <Button variant="outline" size="sm" className="border-border" type="submit">
-            Sign Out
-          </Button>
-        </form>
+        <ProfileDropdown />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <Link href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+    <div className="flex items-center gap-6">
+      <Link href="#how-it-works" className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-[0.2em] hidden md:block cursor-pointer">
         How It Works
       </Link>
       <Link href="/sign-in">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="font-bold uppercase tracking-widest text-[10px] cursor-pointer">
           Sign In
         </Button>
       </Link>
@@ -55,11 +54,11 @@ async function AuthHeader() {
 
 export default async function Home() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
+    <div className="min-h-screen bg-background scroll-smooth">
+      {/* Navigation Header */}
       <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
             <Heart className="w-5 h-5 text-primary" />
             <span className="font-semibold text-foreground text-lg tracking-tight">Memorial</span>
           </Link>
@@ -82,18 +81,18 @@ export default async function Home() {
               A serene space to <br className="hidden md:block" />
               <span className="text-primary">honor those you love</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto font-medium">
               Create a lasting digital tribute where family and friends come together to share memories,
               photos, and stories. Private, respectful, and designed to honor a life well lived.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <Link href="/memorials/new">
-                <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 min-w-[200px] h-14 text-lg rounded-full">
+                <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 min-w-[200px] h-14 text-lg rounded-full font-bold shadow-sm cursor-pointer">
                   Create a Memorial
                 </Button>
               </Link>
               <Link href="#how-it-works">
-                <Button size="lg" variant="outline" className="border-border min-w-[200px] h-14 text-lg rounded-full">
+                <Button size="lg" variant="outline" className="border-border min-w-[200px] h-14 text-lg rounded-full font-bold cursor-pointer">
                   See How It Works
                 </Button>
               </Link>
@@ -101,21 +100,21 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Emotional Appeal Section */}
+        {/* Emotional Appeal Quote */}
         <section className="max-w-4xl mx-auto px-6 py-20 border-y border-border/50">
           <div className="text-center space-y-8">
             <p className="text-2xl md:text-3xl text-foreground font-medium italic leading-relaxed">
               "What we have once enjoyed deeply we can never lose. All that we love deeply becomes a part of us."
             </p>
-            <p className="text-base text-muted-foreground tracking-widest uppercase">— Helen Keller</p>
+            <p className="text-base text-muted-foreground tracking-widest uppercase font-bold">— Helen Keller</p>
           </div>
         </section>
 
         {/* How It Works Section */}
         <section id="how-it-works" className="max-w-6xl mx-auto px-6 py-24 bg-muted/20">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">Simple & Respectful</h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6 tracking-tight">Simple & Respectful</h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto font-medium">
               Build a lasting tribute in minutes. Focus on what matters: the memories.
             </p>
           </div>
@@ -125,7 +124,7 @@ export default async function Home() {
               number="1"
               title="Create the Memorial"
               description="Add their name, dates, a photo, and write a brief biography celebrating their life."
-              icon={<Sparkles className="w-6 h-6" />}
+              icon={<User className="w-6 h-6" />}
             />
             <StepCard
               number="2"
@@ -145,8 +144,8 @@ export default async function Home() {
         {/* Features Section */}
         <section className="max-w-6xl mx-auto px-6 py-24">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">Thoughtful Features</h2>
-            <p className="text-lg text-muted-foreground">Everything you need to create a meaningful, lasting legacy.</p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6 tracking-tight">Thoughtful Features</h2>
+            <p className="text-lg text-muted-foreground font-medium">Everything you need to create a meaningful, lasting legacy.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -190,8 +189,8 @@ export default async function Home() {
               <div className="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center mb-6">
                 <Lock className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">Privacy at the Core</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl">
+              <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6 tracking-tight">Privacy at the Core</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl font-medium">
                 We believe memories are sacred. Your data is never sold, and your privacy is always the priority.
               </p>
             </div>
@@ -220,20 +219,20 @@ export default async function Home() {
         <section className="max-w-6xl mx-auto px-6 py-24">
           <div className="max-w-3xl mx-auto p-12 bg-card border border-border rounded-3xl text-center shadow-sm">
             <Heart className="w-12 h-12 text-primary mx-auto mb-8" />
-            <h2 className="text-3xl font-semibold text-foreground mb-6">
+            <h2 className="text-3xl font-semibold text-foreground mb-6 tracking-tight">
               Start creating a lasting tribute today
             </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-md mx-auto">
+            <p className="text-lg text-muted-foreground mb-10 max-w-md mx-auto font-medium">
               Preserve their legacy in a private, secure, and beautiful space.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <Link href="/memorials/new">
-                <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 min-w-[180px] h-14 rounded-full">
+                <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 min-w-[180px] h-14 rounded-full font-bold shadow-sm cursor-pointer">
                   Create Memorial
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button size="lg" variant="outline" className="border-border min-w-[180px] h-14 rounded-full">
+                <Button size="lg" variant="outline" className="border-border min-w-[180px] h-14 rounded-full font-bold cursor-pointer">
                   Sign Up Free
                 </Button>
               </Link>
@@ -248,15 +247,15 @@ export default async function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-primary" />
-              <span className="font-semibold text-foreground text-lg">Memorial</span>
+              <span className="font-semibold text-foreground text-lg tracking-tight">Memorial</span>
             </div>
-            <p className="text-sm text-muted-foreground font-medium">
+            <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
               Crafted with Care • Private & Secure • {new Date().getFullYear()}
             </p>
-            <div className="flex items-center gap-8 text-sm font-medium">
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
+            <div className="flex items-center gap-8 text-[10px] font-bold uppercase tracking-widest">
+              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Privacy</Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Terms</Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Contact</Link>
             </div>
           </div>
         </div>
@@ -281,9 +280,9 @@ function StepCard({
       <div className="w-12 h-12 rounded-full bg-secondary border border-border flex items-center justify-center mb-6 text-primary">
         {icon}
       </div>
-      <div className="text-xs text-muted-foreground font-bold tracking-widest uppercase mb-3">Step {number}</div>
-      <h3 className="text-xl font-semibold text-foreground mb-4">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <div className="text-xs text-muted-foreground font-black tracking-[0.2em] uppercase mb-3">Step {number}</div>
+      <h3 className="text-xl font-bold text-foreground mb-4 tracking-tight">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed font-medium">{description}</p>
     </div>
   );
 }
@@ -302,8 +301,8 @@ function FeatureCard({
       <div className="w-12 h-12 rounded-xl bg-secondary border border-border flex items-center justify-center mb-6">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold text-foreground mb-4">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="text-xl font-bold text-foreground mb-4 tracking-tight">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed font-medium">{description}</p>
     </div>
   );
 }
@@ -315,8 +314,8 @@ function PrivacyItem({ title, description }: { title: string; description: strin
         <Shield className="w-4 h-4 text-primary" />
       </div>
       <div>
-        <h4 className="text-lg font-semibold text-foreground mb-2">{title}</h4>
-        <p className="text-muted-foreground leading-relaxed">{description}</p>
+        <h4 className="text-lg font-bold text-foreground mb-2 tracking-tight">{title}</h4>
+        <p className="text-muted-foreground leading-relaxed font-medium">{description}</p>
       </div>
     </div>
   );

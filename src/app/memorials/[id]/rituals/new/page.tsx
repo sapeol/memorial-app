@@ -149,14 +149,14 @@ export default function NewRitualPage({
             <div className="flex gap-4 pt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="outline" className="cursor-pointer"
                 onClick={() => router.back()}
                 className="border-border rounded-full flex-1 h-14 text-lg font-medium"
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
+                type="submit" className="cursor-pointer"
                 disabled={loading}
                 className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-1 h-14 text-lg font-medium shadow-sm"
               >

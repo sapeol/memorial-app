@@ -154,14 +154,14 @@ export default function NewMilestonePage({
             <div className="flex gap-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="outline" className="cursor-pointer"
                 onClick={() => router.back()}
                 className="border-border text-foreground hover:bg-muted flex-1"
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
+                type="submit" className="cursor-pointer"
                 disabled={loading}
                 className="bg-primary text-primary-foreground hover:bg-primary-hover flex-1"
               >

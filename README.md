@@ -1,4 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Memorial - Digital Tributes
+
+A serene, high-contrast digital memorial platform designed for privacy, accessibility, and honoring loved ones.
+
+## Architecture & Modular Design
+
+The application has been refactored to follow a modern, modular architecture for better maintainability and scalability.
+
+### State Management (Zustand & Persist)
+We use **Zustand** for lightweight, robust state management. 
+- **Persistence:** Local state (like the multistep memorial creation form) is persisted using the `persist` middleware, ensuring user progress is saved across page reloads.
+- **Global Stores:** Found in `src/lib/store/`, including `auth-store.ts` for user sessions and `memorial-form.ts` for wizard progress.
+
+### Custom Hooks
+Data fetching and complex logic are encapsulated in custom hooks found in `src/lib/hooks/`:
+- `useAuthSync`: Synchronizes Supabase auth state with the global store.
+- `useMemorials`: Manages fetching and refreshing lists of memorials.
+- `useMemorial(id)`: Handles single memorial detail fetching with built-in access checks.
+
+### Utility Functions
+Shared logic is abstracted into `src/lib/utils/`:
+- `format.ts`: Centralized date and lifespan formatting using `date-fns`.
+
+### Component Structure
+- **UI Components:** Reusable primitive components (shadcn/ui based) in `src/components/ui/`.
+- **Layout Components:** High-level wrappers like `ProtectedRoute` in `src/components/layout/`.
+- **Feature Components:** Domain-specific components like `ProfileDropdown` or `MediaGrid`.
+
+### Accessibility & UX
+- **WCAG AAA Compliance:** Color palette ("Serene Stone") and typography are optimized for maximum readability and contrast.
+- **Interactive Indicators:** Explicit `cursor-pointer` for all buttons, links, and selectable elements.
+- **Enhanced Navigation:** Intelligent date pickers with decade-level navigation and smooth-scrolling landing pages.
 
 ## Getting Started
 
@@ -6,31 +37,6 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
