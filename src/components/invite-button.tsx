@@ -1,36 +1,29 @@
 'use client'
 
-import { useState } from 'react'
 import { Mail } from 'lucide-react'
 import { Button } from './ui/button'
-import { InviteModal } from './invite-modal'
+import Link from 'next/link'
 
 interface InviteButtonProps {
   memorialId: string
   memorialName: string
 }
 
-export function InviteButton({ memorialId, memorialName }: InviteButtonProps) {
-  const [showModal, setShowModal] = useState(false)
-
+/**
+ * Updated InviteButton to link directly to the invitation page.
+ * Avoids showing a modal as per simplified UI requirements.
+ */
+export function InviteButton({ memorialId }: InviteButtonProps) {
   return (
-    <>
+    <Link href={`/memorials/${memorialId}/invite`}>
       <Button
         variant="outline"
         size="sm"
-        onClick={() => setShowModal(true)}
-        className="border-border"
+        className="border-border rounded-full px-6 font-bold cursor-pointer h-11"
       >
         <Mail className="w-4 h-4 mr-2" />
         Invite
       </Button>
-      {showModal && (
-        <InviteModal
-          memorialId={memorialId}
-          memorialName={memorialName}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </>
+    </Link>
   )
 }

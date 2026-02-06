@@ -13,7 +13,8 @@ import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ImageUpload } from '@/components/image-upload'
 import { useMemorialFormStore } from '@/lib/store/memorial-form'
-import { ArrowLeft, ArrowRight, Check, Heart, User, Calendar, Image as ImageIcon, Palette, BookOpen } from 'lucide-react'
+import { useDebouncedCallback } from '@/lib/hooks/use-debounce'
+import { ArrowLeft, ArrowRight, Check, Heart, User, Calendar, Image as ImageIcon, Palette, BookOpen, Loader2 } from 'lucide-react'
 
 const THEME_COLORS = [
   { name: 'Slate', value: '#1e293b' },
@@ -23,10 +24,6 @@ const THEME_COLORS = [
   { name: 'Stone', value: '#292524' },
 ]
 
-/**
- * Steps for the memorial creation wizard.
- * Removed Sparkle icons as per accessibility and brand requirements.
- */
 const STEPS = [
   { id: 1, title: 'Identity', icon: User },
   { id: 2, title: 'Dates', icon: Calendar },
@@ -38,7 +35,7 @@ const STEPS = [
 
 export default function NewMemorialPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
 
@@ -56,13 +53,40 @@ export default function NewMemorialPage() {
     reset
   } = useMemorialFormStore()
 
+  // Local state for immediate feedback without skipped letters
+  const [localName, setLocalName] = useState(name)
+  const [localBio, setLocalBio] = useState(bio)
+
+  // Sync store to local state on initial load or step change
   useEffect(() => {
-    if (user) setUserId(user.id)
-  }, [user])
+    setLocalName(name)
+    setLocalBio(bio)
+  }, [step]) // Only sync when step changes or on mount
+
+  // Debounced update to the persisted store (300ms)
+  const debouncedSync = useDebouncedCallback((data: any) => {
+    setData(data)
+  }, 300)
+
+  const handleNameChange = (val: string) => {
+    setLocalName(val)
+    debouncedSync({ name: val })
+  }
+
+  const handleBioChange = (val: string) => {
+    setLocalBio(val)
+    debouncedSync({ bio: val })
+  }
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      if (user) setUserId(user.id)
+    })
+  }, [])
 
   const handleSubmit = async () => {
     setError(null)
-    setLoading(true)
+    setIsSubmitting(true)
 
     try {
       const supabase = createClient()
@@ -76,10 +100,10 @@ export default function NewMemorialPage() {
       const { data: memorial, error: memorialError } = await supabase
         .from('memorials')
         .insert({
-          name,
+          name: localName,
           birth_date: birthDate || null,
           passing_date: passingDate || null,
-          bio,
+          bio: localBio,
           cover_image: coverImage || null,
           theme_color: themeColor,
           owner_id: user.id,
@@ -101,7 +125,7 @@ export default function NewMemorialPage() {
       router.push(`/memorials/${memorial.id}`)
     } catch (err: any) {
       setError(err.message || 'Failed to create memorial')
-      setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -123,7 +147,7 @@ export default function NewMemorialPage() {
   const [direction, setDirection] = useState(0)
 
   const handleNext = () => {
-    if (step === 1 && !name) {
+    if (step === 1 && !localName) {
       setError('Please enter a name')
       return
     }
@@ -201,8 +225,8 @@ export default function NewMemorialPage() {
                     id="name"
                     type="text"
                     placeholder="e.g., Jane Mary Doe"
-                    value={name}
-                    onChange={(e) => setData({ name: e.target.value })}
+                    value={localName}
+                    onChange={(e) => handleNameChange(e.target.value)}
                     required
                     className="bg-background border-border text-foreground h-14 rounded-xl text-lg font-medium"
                     autoFocus
@@ -249,7 +273,7 @@ export default function NewMemorialPage() {
                       placeholder="https://..."
                       value={coverImage}
                       onChange={(e) => setData({ coverImage: e.target.value })}
-                      className="bg-background border-border text-foreground h-12 rounded-xl"
+                      className="bg-background border-border text-foreground h-12 rounded-xl font-medium"
                     />
                   </div>
                 </div>
@@ -291,8 +315,8 @@ export default function NewMemorialPage() {
                   <Textarea
                     id="bio"
                     placeholder="Write a brief biography..."
-                    value={bio}
-                    onChange={(e) => setData({ bio: e.target.value })}
+                    value={localBio}
+                    onChange={(e) => handleBioChange(e.target.value)}
                     rows={6}
                     className="bg-background border-border text-foreground rounded-2xl p-5 leading-relaxed text-lg font-medium"
                     autoFocus
@@ -310,7 +334,7 @@ export default function NewMemorialPage() {
                       {!coverImage && <Heart className="w-full h-full p-5 text-muted-foreground/20" />}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-foreground leading-tight">{name}</h3>
+                      <h3 className="text-xl font-bold text-foreground leading-tight">{localName}</h3>
                       <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest">
                         {birthDate ? new Date(birthDate).getFullYear() : '—'} — {passingDate ? new Date(passingDate).getFullYear() : '—'}
                       </p>
@@ -327,7 +351,7 @@ export default function NewMemorialPage() {
                     </div>
                     <div className="p-4 rounded-xl border border-border bg-background">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Story</p>
-                      <span className="text-xs font-bold uppercase">{bio.length} characters</span>
+                      <span className="text-xs font-bold uppercase">{localBio.length} characters</span>
                     </div>
                   </div>
                 </div>
@@ -363,10 +387,10 @@ export default function NewMemorialPage() {
                   <Button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={loading}
+                    disabled={isSubmitting}
                     className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-[2] h-14 text-lg font-bold shadow-sm cursor-pointer"
                   >
-                    {loading ? (
+                    {isSubmitting ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Preserving...
@@ -384,17 +408,5 @@ export default function NewMemorialPage() {
         </AnimatePresence>
       </main>
     </div>
-  )
-}
-
-function Loader2({ className }: { className?: string }) {
-  return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-      className={className}
-    >
-      <Check className="w-full h-full" />
-    </motion.div>
   )
 }

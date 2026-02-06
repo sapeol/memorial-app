@@ -10,40 +10,44 @@ interface ScrollLinkProps {
 }
 
 /**
- * A client-side component that handles smooth scrolling to an anchor on the same page.
- * Provides a reliable fallback for normal navigation if the href is not a local anchor.
+ * A client-side component that handles smooth scrolling to an anchor.
+ * Uses a span with role="button" to avoid invalid nested HTML buttons.
  */
 export function ScrollLink({ href, children, className }: ScrollLinkProps) {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Only handle internal anchor links
+  const handleClick = (e: React.MouseEvent) => {
     if (href.startsWith('#')) {
+      e.preventDefault()
       const id = href.replace('#', '')
       const element = document.getElementById(id)
       
       if (element) {
-        e.preventDefault()
         element.scrollIntoView({
           behavior: 'smooth',
           block: 'start',
         })
-        
-        // Update URL hash without causing a page jump/reload
-        if (window.history.pushState) {
-          window.history.pushState(null, '', href)
-        } else {
-          window.location.hash = href
-        }
+        window.history.pushState(null, '', href)
       }
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      const id = href.replace('#', '')
+      const element = document.getElementById(id)
+      if (element) element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
-    <a 
-      href={href} 
-      onClick={handleClick} 
-      className={cn('cursor-pointer', className)}
+    <span 
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      className={cn('cursor-pointer focus:outline-none', className)}
     >
       {children}
-    </a>
+    </span>
   )
 }
