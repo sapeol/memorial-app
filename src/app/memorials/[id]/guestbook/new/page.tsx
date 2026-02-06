@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +14,7 @@ import { ArrowLeft, Loader2, MessageSquare } from 'lucide-react'
 
 /**
  * Page for leaving a heartfelt message in the memorial guestbook.
+ * Redesigned to prioritize the message content and add smooth animations.
  */
 export default function NewGuestbookEntryPage() {
   const router = useRouter()
@@ -54,7 +56,11 @@ export default function NewGuestbookEntryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="min-h-screen bg-background"
+    >
       <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
@@ -68,27 +74,20 @@ export default function NewGuestbookEntryPage() {
 
       <main className="max-w-2xl mx-auto px-6 py-16">
         <div className="mb-12 text-center">
-          <div className="w-16 h-16 rounded-full bg-secondary border border-border flex items-center justify-center mx-auto mb-6">
+          <motion.div 
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            className="w-16 h-16 rounded-full bg-secondary border border-border flex items-center justify-center mx-auto mb-6"
+          >
             <MessageSquare className="w-8 h-8 text-primary" />
-          </div>
+          </motion.div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-3">Leave a Message</h1>
           <p className="text-lg text-muted-foreground font-medium">Share your condolences and cherished memories.</p>
         </div>
 
         <Card className="p-10 bg-card border border-border rounded-[32px] shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-3">
-              <Label htmlFor="authorName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Name</Label>
-              <Input
-                id="authorName"
-                type="text"
-                placeholder="How should your name appear?"
-                value={authorName}
-                onChange={(e) => setAuthorName(e.target.value)}
-                className="bg-background border-border text-foreground h-14 rounded-xl font-medium"
-              />
-            </div>
-
+          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+            {/* Message field is now top-most for better prominence */}
             <div className="space-y-3">
               <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Message *</Label>
               <Textarea
@@ -98,15 +97,31 @@ export default function NewGuestbookEntryPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 rows={8}
-                className="bg-background border-border text-foreground rounded-2xl p-5 leading-relaxed font-medium text-lg"
+                className="bg-background border-border text-foreground rounded-2xl p-5 leading-relaxed font-medium text-lg focus:ring-2 focus:ring-primary/20"
                 autoFocus
               />
             </div>
 
+            <div className="space-y-3">
+              <Label htmlFor="authorName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Name</Label>
+              <Input
+                id="authorName"
+                type="text"
+                placeholder="How should your name appear?"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
+                className="bg-background border-border text-foreground h-14 rounded-xl font-medium focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 shake">
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 rounded-xl bg-destructive/5 border border-destructive/20"
+              >
                 <p className="text-destructive text-sm font-bold">{error}</p>
-              </div>
+              </motion.div>
             )}
 
             <div className="flex gap-4 pt-4">
@@ -134,6 +149,6 @@ export default function NewGuestbookEntryPage() {
           </form>
         </Card>
       </main>
-    </div>
+    </motion.div>
   )
 }

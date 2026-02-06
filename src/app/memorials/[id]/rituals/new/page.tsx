@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,9 +12,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/store/auth-store'
 import { Flame, Heart, Flower2, Star, ArrowLeft, Loader2 } from 'lucide-react'
 
-/**
- * Available ritual types for memorial interaction.
- */
 const RITUAL_TYPES = [
   { value: 'candle', label: 'Light a Candle', icon: Flame },
   { value: 'flower', label: 'Leave Flowers', icon: Flower2 },
@@ -23,6 +21,7 @@ const RITUAL_TYPES = [
 
 /**
  * Page for creating a symbolic ritual to honor the deceased.
+ * Redesigned to prioritize the personal note and add smooth animations.
  */
 export default function NewRitualPage() {
   const router = useRouter()
@@ -33,7 +32,6 @@ export default function NewRitualPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  // Form state
   const [message, setMessage] = useState('')
   const [guestName, setGuestName] = useState(user?.user_metadata?.full_name || '')
   const [ritualType, setRitualType] = useState<typeof RITUAL_TYPES[number]['value']>('candle')
@@ -59,7 +57,6 @@ export default function NewRitualPage() {
 
       if (insertError) throw insertError
 
-      // Redirect back to rituals tab
       router.push(`/memorials/${memorialId}?tab=rituals`)
     } catch (err: any) {
       setError(err.message || 'Failed to create ritual')
@@ -68,7 +65,11 @@ export default function NewRitualPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="min-h-screen bg-background"
+    >
       <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
@@ -81,16 +82,31 @@ export default function NewRitualPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-16">
-        <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-3">Create a Ritual</h1>
+        <div className="mb-12 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-3">Perform a Ritual</h1>
           <p className="text-lg text-muted-foreground font-medium">Set up a personal remembrance ritual to honor their life.</p>
         </div>
 
         <Card className="p-10 bg-card border border-border rounded-[32px] shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-10">
-            {/* Ritual Selection Grid */}
-            <div className="space-y-4">
-              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Ritual Type</Label>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+            {/* Personal Message is now top-most on all devices */}
+            <div className="space-y-3">
+              <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">A Note of Love *</Label>
+              <Textarea
+                id="message"
+                placeholder="What does this ritual mean to you? Share a short prayer or thought."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+                required
+                className="bg-background border-border text-foreground rounded-2xl p-5 leading-relaxed font-medium focus:ring-2 focus:ring-primary/20"
+                autoFocus
+              />
+            </div>
+
+            {/* Ritual Selection */}
+            <div className="space-y-4 pt-2 border-t border-border/50">
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">The Symbolic Act</Label>
               <div className="grid grid-cols-2 gap-4">
                 {RITUAL_TYPES.map((type) => {
                   const Icon = type.icon
@@ -102,7 +118,7 @@ export default function NewRitualPage() {
                       onClick={() => setRitualType(type.value)}
                       className={`p-6 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 cursor-pointer ${
                         isSelected
-                          ? 'border-primary bg-primary/5 shadow-sm'
+                          ? 'border-primary bg-primary/5 shadow-sm scale-[1.02]'
                           : 'border-border hover:border-primary/20 hover:bg-secondary/20'
                       }`}
                     >
@@ -114,40 +130,28 @@ export default function NewRitualPage() {
               </div>
             </div>
 
-            {/* Name and Message Fields */}
-            <div className="space-y-6 pt-2 border-t border-border/50">
-              <div className="space-y-3">
-                <Label htmlFor="guestName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Name</Label>
-                <Input
-                  id="guestName"
-                  type="text"
-                  placeholder="How you wish to be remembered"
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  className="bg-background border-border text-foreground h-14 rounded-xl font-medium"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label htmlFor="message" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">A Note of Love</Label>
-                <Textarea
-                  id="message"
-                  placeholder="What does this ritual mean to you?"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={4}
-                  className="bg-background border-border text-foreground rounded-2xl p-5 leading-relaxed font-medium"
-                />
-              </div>
+            <div className="space-y-3">
+              <Label htmlFor="guestName" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Name</Label>
+              <Input
+                id="guestName"
+                type="text"
+                placeholder="How you wish to be remembered"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                className="bg-background border-border text-foreground h-14 rounded-xl font-medium focus:ring-2 focus:ring-primary/20"
+              />
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 shake">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 shake"
+              >
                 <p className="text-destructive text-sm font-bold">{error}</p>
-              </div>
+              </motion.div>
             )}
 
-            {/* Submission Actions */}
             <div className="flex gap-4 pt-4">
               <Button
                 type="button"
@@ -159,7 +163,7 @@ export default function NewRitualPage() {
               </Button>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !message}
                 className="bg-primary text-primary-foreground hover:opacity-90 rounded-full flex-[2] h-14 text-lg font-bold shadow-sm cursor-pointer"
               >
                 {loading ? (
@@ -167,12 +171,12 @@ export default function NewRitualPage() {
                     <Loader2 className="w-5 h-5 animate-spin" />
                     Creating...
                   </span>
-                ) : 'Perform Ritual'}
+                ) : 'Complete Ritual'}
               </Button>
             </div>
           </form>
         </Card>
       </main>
-    </div>
+    </motion.div>
   )
 }
